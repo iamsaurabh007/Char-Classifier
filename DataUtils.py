@@ -2,10 +2,11 @@ from PIL import Image
 import numpy as np
 import torchvision
 import json
+import torch
 import utils
 
 
-class IMGDS(data.Dataset):
+class IMGDS(torch.utils.data.Dataset):
     #Reuires a directiory with imgs and json folder in it
     def __init__(self, label_dict,root_dir,imglist):
         """
