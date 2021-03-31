@@ -10,7 +10,7 @@ from os import listdir
 from os.path import isfile, join
 from torch.utils.tensorboard import SummaryWriter
 
-if __name__ =='__main__':
+#if __name__ =='__main__':
 def RUN(l_r,batch_size):
     os.system('mkdir -p ' +config.MODELCHECKPOINT_PATH)
     random.seed(10)
