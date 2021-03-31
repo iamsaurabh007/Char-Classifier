@@ -1,5 +1,5 @@
 
-import torch.nn.functional as f
+
 import torch
 import torch.cuda as cuda
 import torch.utils.data as data
@@ -23,14 +23,14 @@ import DataUtils
 def training_step(model, batch):
     images, labels = batch 
     out = model(images)                  # Generate predictions
-    loss = f.cross_entropy(out, labels) # Calculate loss
+    loss = F.cross_entropy(out, labels) # Calculate loss
     return loss
     
 def validation_step(model, batch):
     images, labels = batch 
     with torch.no_grad(): 
         out = model(images)                    # Generate predictions
-        loss = f.cross_entropy(out, labels)   # Calculate loss
+        loss = F.cross_entropy(out, labels)   # Calculate loss
     acc = accuracy(out, labels)           # Calculate accuracy
     return {'val_loss': loss, 'val_acc': acc}
         
