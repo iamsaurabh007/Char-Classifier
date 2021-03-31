@@ -53,6 +53,7 @@ def evaluate(model, val_loader):
     return validation_epoch_end(outputs)
 
 def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
+    model_dir=config.MODELCHECKPOINT_PATH
     history = []
     optimizer = opt_func(model.parameters(), lr, weight_decay=1e-4)
     for epoch in range(epochs):
