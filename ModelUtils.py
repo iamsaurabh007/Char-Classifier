@@ -55,7 +55,7 @@ def evaluate(model, val_loader):
 def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
     model_dir=config.MODELCHECKPOINT_PATH
     history = []
-    optimizer = opt_func(model.parameters(), lr, weight_decay=1e-4)
+    optimizer = opt_func(model.parameters(), lr, weight_decay=lr/10.0)
     for epoch in range(epochs):
         # Training Phase 
         running_loss=[]
@@ -74,11 +74,11 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
         writer.add_scalar('validation acc per epoch',result['val_acc'],epoch)
         epoch_end(epoch, result)
         history.append(result)
-        if epoch%5==1:
+        '''if epoch%5==1:
             torch.save({
                         'epoch': epoch,
                         'model_state_dict': model.state_dict(),
                         'optimizer_state_dict': optimizer.state_dict(),
                         'loss': loss_mean,
-                        }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
+                        }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))'''
     return history
