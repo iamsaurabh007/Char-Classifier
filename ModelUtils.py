@@ -59,12 +59,16 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
     for epoch in range(epochs):
         # Training Phase 
         running_loss=[]
+        cnt=0
         for batch in train_loader:
             optimizer.zero_grad()
             loss = training_step(model,batch)
             loss.backward()
             optimizer.step()
             running_loss.append(loss.item())
+            cnt+=1
+            if cnt%1000==1:
+                print("MEAN LOSS TILL {} BATCH is {}".format(cnt,sum(running_loss) / len(running_loss)))
         loss_mean=sum(running_loss) / len(running_loss)
         print("Training done at epoch",epoch,"training_loss=",loss_mean)
         writer.add_scalar('training loss per epoch',loss_mean,epoch)
@@ -74,11 +78,10 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
         writer.add_scalar('validation acc per epoch',result['val_acc'],epoch)
         epoch_end(epoch, result)
         history.append(result)
-        '''if epoch%5==1:
-            torch.save({
-                        'epoch': epoch,
-                        'model_state_dict': model.state_dict(),
-                        'optimizer_state_dict': optimizer.state_dict(),
-                        'loss': loss_mean,
-                        }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))'''
+        torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'loss': loss_mean,
+                    }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
     return history
