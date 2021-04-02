@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch.cuda as cuda
 import torch.utils.data as data
 import os
+import torch
 from os import listdir
 from os.path import isfile, join
 import torchvision
