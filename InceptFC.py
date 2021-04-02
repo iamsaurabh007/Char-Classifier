@@ -7,6 +7,7 @@ from os.path import isfile, join
 import torchvision
 import random
 import torch.nn.functional as F
+import config
 
 out_chnl=config.channel
 class LINEAR_BLOCK(nn.Module):
