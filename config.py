@@ -22,3 +22,8 @@ num_epochs=500
 
 #FOR INCEPTION ARCHITECTURE
 channel=32
+
+####MODELEVALUATION
+
+checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
+pdfdata="/home/ubuntu/data/ocr/temp/"
