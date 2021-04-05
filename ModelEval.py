@@ -10,6 +10,7 @@ import config
 import ModelUtils
 import Resnet
 import DataUtils
+import InceptFC
 
 #import pdf2image
 from os import listdir
@@ -18,6 +19,7 @@ import torchvision
 import json
 import torch
 import utils
+from bounds_refinement import bounds_refine
 
 
 def get_ds(image, bounds):
@@ -89,8 +91,6 @@ class IMGDS(torch.utils.data.Dataset):
         label=self.loadlabel(idx)
         return image,label
 
-
-
 if __name__ =='__main__':
     device=config.device
     if device==None:
@@ -107,6 +107,7 @@ if __name__ =='__main__':
     print("MODEL LOADED")
     model.eval()
     pdf_acc=[]
+    weight=[]
     mypath=join(config.pdfdata,"images")
     imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
     for imgpath in imgpaths:
@@ -115,6 +116,7 @@ if __name__ =='__main__':
         jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
         with open(jsonpath) as f:
             bounds = json.load(f)
+        #bounds=bounds_refine(bounds,imgpath)
         print("Characters in Image=",len(bounds))
         ds=get_ds(imgpath,bounds)
         ds_train=IMGDS(label_dict,ds)
@@ -122,8 +124,9 @@ if __name__ =='__main__':
         train_gen =DataUtils.DeviceDataLoader(train_gen, device)
         result = ModelUtils.evaluate(model,train_gen)
         print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
-        pdf_acc.append(result['val_acc'])
+        pdf_acc.append(len(bounds)*result['val_acc'])
+        weight.append(len(bounds))
         #os.remove(imgpath)
         #os.remove(jsonpath)
     ##ASSUMING NEARLY EQUAL CHARACTERS ON EACH PAGE
-    print("Accuracy Mean on this pdf is {}".format(sum(pdf_acc)/len(pdf_acc)))
+    print("Accuracy Mean on this pdf is {}".format(sum(pdf_acc)/sum(weight)))
