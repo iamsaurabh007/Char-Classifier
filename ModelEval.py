@@ -101,6 +101,7 @@ if __name__ =='__main__':
         revdict[i]=sym
     model=Resnet.ResNet50(3,97)
     model.to(device)
+    print(config.checkpath)
     checkpoint=torch.load(config.checkpath, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     print("MODEL LOADED")
@@ -122,7 +123,7 @@ if __name__ =='__main__':
         result = ModelUtils.evaluate(model,train_gen)
         print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
         pdf_acc.append(result['val_acc'])
-        os.remove(imgpath)
-        os.remove(jsonpath)
+        #os.remove(imgpath)
+        #os.remove(jsonpath)
     ##ASSUMING NEARLY EQUAL CHARACTERS ON EACH PAGE
-    print("Accuracy Mean on this pdf is {}".format(sum(pdf_acc)//len(pdf_acc)))
+    print("Accuracy Mean on this pdf is {}".format(sum(pdf_acc)/len(pdf_acc)))
