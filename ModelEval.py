@@ -1,20 +1,22 @@
-from google.cloud import vision
 import io
 import sys 
 import os
-import cv2
+#import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-import glob
+#import matplotlib.pyplot as plt
+#import glob
 from PIL import Image, ImageDraw
 import config
 import ModelUtils
 import Resnet
 
-import pdf2image
+#import pdf2image
 from os import listdir
 from os.path import isfile, join
-
+import torchvision
+import json
+import torch
+import utils
 
 
 def get_ds(image, bounds):
