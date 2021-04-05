@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw
 import config
 import ModelUtils
 import Resnet
+import DataUtils
 
 #import pdf2image
 from os import listdir
@@ -94,15 +95,15 @@ if __name__ =='__main__':
     device=config.device
     if device==None:
         device = utils.get_default_device()
-    label_dict=create_label_dict(config.symbols)
+    label_dict=utils.create_label_dict(config.symbols)
     revdict={}
     for i,sym in enumerate(config.symbols):
         revdict[i]=sym
     model=Resnet.ResNet50(3,97)
+    model.to(device)
     checkpoint=torch.load(config.checkpath, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     print("MODEL LOADED")
-    #model.to(device)
     model.eval()
     pdf_acc=[]
     mypath=join(config.pdfdata,"images")
