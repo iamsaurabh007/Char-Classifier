@@ -120,5 +120,6 @@ if __name__ =='__main__':
         print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
         pdf_acc.append(result['val_acc'])
         os.remove(imgpath)
+        os.remove(jsonpath)
     ##ASSUMING NEARLY EQUAL CHARACTERS ON EACH PAGE
     print("Accuracy Mean on this pdf is {}".format(sum(pdf_acc)//len(pdf_acc)))
