@@ -64,10 +64,10 @@ def correct_region(region,energy_density,rat):
                                                             {'x':int(box_right-right_delta),'y':box_bottom},\
                                                             {'x':int(box_left-left_delta),'y':box_bottom}]}}
     else:
-        return {'text':text,'boundingBox': {'vertices'  : [{'x':int(box_left),'y':box_top},\
-                                                            {'x':int(box_right),'y':box_top},\
-                                                            {'x':int(box_right),'y':box_bottom},\
-                                                            {'x':int(box_left),'y':box_bottom}]}}
+        return {'text':text,'boundingBox': {'vertices'  : [{'x':int(box_left-1),'y':box_top},\
+                                                            {'x':int(box_right+1),'y':box_top},\
+                                                            {'x':int(box_right+1),'y':box_bottom},\
+                                                            {'x':int(box_left-1),'y':box_bottom}]}}
 
 
 def get_corrected_regions(regions,energy_density,rat):
