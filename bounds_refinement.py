@@ -8,12 +8,15 @@ def get_energy_density(image_path):
     
     image   = cv2.imread(image_path,0)
     binary  = cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-    distance_transform =cv2.distanceTransform(binary.copy(), distanceType=cv2.DIST_L2, maskSize=3)
+    #laplacian = cv2.Laplacian(binary.copy(),cv2.CV_32F)
+    #laplacian = np.uint8(laplacian)
+    #distance_transform =cv2.distanceTransform(binary.copy(), distanceType=cv2.DIST_L2, maskSize=5)
     
     #energy_density = 1 /  np.log(distance_transform + np.exp(1))
-    energy_density = 1 /  (distance_transform + 1)**2
+    #energy_density = 1 /  (distance_transform + 1)**2
     
-    return energy_density
+    return binary
+
 
 def get_equilibrium_delta(boundry,energy_density ,axis,flag):
 
@@ -22,9 +25,9 @@ def get_equilibrium_delta(boundry,energy_density ,axis,flag):
     inital_boundry = boundry_energy.shape[1 - axis]  * 0.5
     p=boundry_energy.sum(axis=axis)[::-1]
     if flag=='l':
-        delta=inital_boundry-(p.shape[0]-1-np.argmin(p))
+        delta=inital_boundry-(p.shape[0]-1-np.argmax(p))
     else:
-        delta = inital_boundry - np.argmin(boundry_energy.sum(axis=axis))
+        delta = inital_boundry - np.argmax(boundry_energy.sum(axis=axis))
     #print(inital_boundry)
     #print(delta)
     return delta

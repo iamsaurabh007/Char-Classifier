@@ -120,7 +120,7 @@ if __name__ =='__main__':
             with open(jsonpath) as f:
                 bounds = json.load(f)
             bounds=bounds_refine(bounds,imgpath,ref)
-            print("Characters in Image=",len(bounds))
+            #print("Characters in Image=",len(bounds))
             ds=get_ds(imgpath,bounds)
             ds_train=IMGDS(label_dict,ds)
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
