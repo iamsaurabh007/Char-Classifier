@@ -110,23 +110,26 @@ if __name__ =='__main__':
     weight=[]
     mypath=join(config.pdfdata,"images")
     imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
-    for imgpath in imgpaths:
-        with io.open(imgpath, 'rb') as image_file:
-            content = image_file.read()
-        jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
-        with open(jsonpath) as f:
-            bounds = json.load(f)
-        #bounds=bounds_refine(bounds,imgpath)
-        print("Characters in Image=",len(bounds))
-        ds=get_ds(imgpath,bounds)
-        ds_train=IMGDS(label_dict,ds)
-        train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
-        train_gen =DataUtils.DeviceDataLoader(train_gen, device)
-        result = ModelUtils.evaluate(model,train_gen)
-        print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
-        pdf_acc.append(len(bounds)*result['val_acc'])
-        weight.append(len(bounds))
-        #os.remove(imgpath)
-        #os.remove(jsonpath)
-    ##ASSUMING NEARLY EQUAL CHARACTERS ON EACH PAGE
-    print("Accuracy Mean on this pdf is {}".format(sum(pdf_acc)/sum(weight)))
+
+    refinement_ratio=[0.1,0.2,0.3,0.4,0.5]
+    for ref in refinement_ratio:
+        for imgpath in imgpaths:
+            with io.open(imgpath, 'rb') as image_file:
+                content = image_file.read()
+            jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+            with open(jsonpath) as f:
+                bounds = json.load(f)
+            bounds=bounds_refine(bounds,imgpath,ref)
+            print("Characters in Image=",len(bounds))
+            ds=get_ds(imgpath,bounds)
+            ds_train=IMGDS(label_dict,ds)
+            train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
+            train_gen =DataUtils.DeviceDataLoader(train_gen, device)
+            result = ModelUtils.evaluate(model,train_gen)
+            #print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
+            pdf_acc.append(len(bounds)*result['val_acc'])
+            weight.append(len(bounds))
+            #os.remove(imgpath)
+            #os.remove(jsonpath)
+        ##ASSUMING NEARLY EQUAL CHARACTERS ON EACH PAGE
+        print("ref={},   Accuracy Mean on this pdf is {}".format(ref,sum(pdf_acc)/sum(weight)))

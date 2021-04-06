@@ -29,7 +29,7 @@ def get_equilibrium_delta(boundry,energy_density ,axis,flag):
     #print(delta)
     return delta
 
-def correct_region(region,energy_density):
+def correct_region(region,energy_density,rat):
     image_height      = energy_density.shape[0]
     image_widht=energy_density.shape[1]
     text=region['text']
@@ -49,8 +49,8 @@ def correct_region(region,energy_density):
         #boundry_top    = [ max(box_top - box_height * 0.5 ,0), box_left ,box_right ,box_top + box_height * 0.5]
         #boundry_bottom = [ box_bottom - box_height * 0.5 , box_left ,box_right ,min(box_bottom + box_height * 0.5,image_height)]
         
-        boundry_left=[box_top, max(box_left - box_widht * 0.5 ,0) ,box_left+box_widht*0.5 , box_bottom]
-        boundry_right = [ box_top , box_right-box_widht*0.5,min(box_right + box_widht*0.5,image_widht) ,box_bottom]
+        boundry_left=[box_top, max(box_left - box_widht * rat ,0) ,box_left+box_widht*rat , box_bottom]
+        boundry_right = [ box_top , box_right-box_widht*rat,min(box_right + box_widht*rat,image_widht) ,box_bottom]
         
         #top_delta    = get_equilibrium_delta(boundry_top , energy_density,axis=1)
         #bottom_delta = get_equilibrium_delta(boundry_bottom, energy_density,axis=1)
@@ -67,14 +67,14 @@ def correct_region(region,energy_density):
         return region
 
 
-def get_corrected_regions(regions,energy_density):
+def get_corrected_regions(regions,energy_density,rat):
     corrected_regions = []
     for region in regions :
             #print(region)
-            corrected_regions.append(correct_region(region,energy_density))
+            corrected_regions.append(correct_region(region,energy_density,rat))
     return corrected_regions
 
-def bounds_refine(bounds,imgpath):
+def bounds_refine(bounds,imgpath,rat):
     energy_density = get_energy_density(imgpath)
-    corrected_regions = get_corrected_regions(bounds,energy_density)
+    corrected_regions = get_corrected_regions(bounds,energy_density,rat)
     return corrected_regions
