@@ -99,7 +99,8 @@ if __name__ =='__main__':
     revdict={}
     for i,sym in enumerate(config.symbols):
         revdict[i]=sym
-    model=Resnet.ResNet50(3,97)
+    model=InceptFC.FC_Model()    
+    #model=Resnet.ResNet50(3,97)
     model.to(device)
     print(config.checkpath)
     checkpoint=torch.load(config.checkpath, map_location=device)

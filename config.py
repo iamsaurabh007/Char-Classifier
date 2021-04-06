@@ -25,5 +25,6 @@ channel=32
 
 ####MODELEVALUATION
 
-checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
+#checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
+checkpath="/home/ubuntu/data/ocr/ModelInceptfinal/epoch-36.pt"
 pdfdata="/home/ubuntu/data/ocr/temp/"
