@@ -43,7 +43,7 @@ def correct_region(region,energy_density,rat):
     box_top    =  box[0]['y']
     box_bottom =  box[3]['y']
 
-    if box_height > 0:
+    if box_width > 0:
         #order : top, left, right, bottom
         
         #boundry_top    = [ max(box_top - box_height * 0.5 ,0), box_left ,box_right ,box_top + box_height * 0.5]
@@ -64,7 +64,10 @@ def correct_region(region,energy_density,rat):
                                                             {'x':int(box_right-right_delta),'y':box_bottom},\
                                                             {'x':int(box_left-left_delta),'y':box_bottom}]}}
     else:
-        return region
+        return {'text':text,'boundingBox': {'vertices'  : [{'x':int(box_left),'y':box_top},\
+                                                            {'x':int(box_right),'y':box_top},\
+                                                            {'x':int(box_right),'y':box_bottom},\
+                                                            {'x':int(box_left),'y':box_bottom}]}}
 
 
 def get_corrected_regions(regions,energy_density,rat):

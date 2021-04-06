@@ -111,7 +111,7 @@ if __name__ =='__main__':
     mypath=join(config.pdfdata,"images")
     imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
 
-    refinement_ratio=[0.1,0.2,0.3,0.4,0.5]
+    refinement_ratio=[0.5]
     for ref in refinement_ratio:
         for imgpath in imgpaths:
             with io.open(imgpath, 'rb') as image_file:
