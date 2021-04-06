@@ -43,7 +43,7 @@ def correct_region(region,energy_density,rat):
     box_top    =  box[0]['y']
     box_bottom =  box[3]['y']
 
-    if box_width > 0:
+    if box_witdh > 0:
         #order : top, left, right, bottom
         
         #boundry_top    = [ max(box_top - box_height * 0.5 ,0), box_left ,box_right ,box_top + box_height * 0.5]

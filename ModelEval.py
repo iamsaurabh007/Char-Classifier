@@ -55,11 +55,17 @@ class IMGDS(torch.utils.data.Dataset):
     def loadimage(self,index):
         im = self.ds[index][0]
         if im.size[0]>im.size[1]:
-            width=100
-            height=int(im.size[1]*100/im.size[0])
+            try:
+                width=100
+                height=int(im.size[1]*100/im.size[0])
+            except:
+                print(im.size)
         else:
-            height=100
-            width=int(im.size[0]*100/im.size[1])
+            try:
+                height=100
+                width=int(im.size[0]*100/im.size[1])
+            except:
+                print(im.size)
         im=im.resize((width,height), Image.ANTIALIAS)
         background = Image.new('RGB', (100, 100), (255, 255, 255))
         offset = (int(round(((100 - width) / 2), 0)), int(round(((100 - height) / 2),0)))
