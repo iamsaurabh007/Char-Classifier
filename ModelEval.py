@@ -60,10 +60,7 @@ class IMGDS(torch.utils.data.Dataset):
         else:
             height=100
             width=int(im.size[0]*100/im.size[1])
-        try:
-            im=im.resize((width,height), Image.ANTIALIAS)
-        except:
-            print(height,width,index)
+        im=im.resize((width,height), Image.ANTIALIAS)
         background = Image.new('RGB', (100, 100), (255, 255, 255))
         offset = (int(round(((100 - width) / 2), 0)), int(round(((100 - height) / 2),0)))
         background.paste(im, offset)
@@ -114,7 +111,7 @@ if __name__ =='__main__':
     mypath=join(config.pdfdata,"images")
     imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
 
-    refinement_ratio=[0.5]
+    refinement_ratio=[0.03,0.07,0.1,0.15,0.20,0.3,0.4,0.5]
     for ref in refinement_ratio:
         for imgpath in imgpaths:
             with io.open(imgpath, 'rb') as image_file:
