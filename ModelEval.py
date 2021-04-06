@@ -59,13 +59,13 @@ class IMGDS(torch.utils.data.Dataset):
                 width=100
                 height=int(im.size[1]*100/im.size[0])
             except:
-                print(im.size)
+                print(im.size,index)
         else:
             try:
                 height=100
                 width=int(im.size[0]*100/im.size[1])
             except:
-                print(im.size)
+                print(im.size,index)
         im=im.resize((width,height), Image.ANTIALIAS)
         background = Image.new('RGB', (100, 100), (255, 255, 255))
         offset = (int(round(((100 - width) / 2), 0)), int(round(((100 - height) / 2),0)))
