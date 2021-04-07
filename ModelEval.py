@@ -51,7 +51,7 @@ def get_ds(image, bounds):
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
-    return ds,coords,labels
+    return ds,coord,labels
 
 
 class IMGDS(torch.utils.data.Dataset):
@@ -159,6 +159,7 @@ if __name__ =='__main__':
                     out = model(images)
                 _, preds = torch.max(out, dim=1)
                 predic.extend(preds.detach().cpu().numpy().tolist())
+            predic=[revdict[i] for i in predic]
             df['Predicted']=predic
             csvpath=join(config.pdfdata,"csv/")
             csvpath=join(csvpath,os.path.splitext(os.path.basename(imgpath))[0])
