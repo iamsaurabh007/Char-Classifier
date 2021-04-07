@@ -23,11 +23,11 @@ from bounds_refinement import bounds_refine
 
 
 def get_ds(image, bounds):
-    img= Image.open(image)
-    h=img.size[1]
-    w=img.size[0]
-    w=int(2.0*w)
-    image=img.resize((w,h))
+    image= Image.open(image)
+    #h=img.size[1]
+    #w=img.size[0]
+    #w=int(2.0*w)
+    #image=img.resize((w,h))
     ds=[]
     for bound in bounds:
         label=bound['text']
@@ -36,10 +36,10 @@ def get_ds(image, bounds):
                        bound["vertices"][0]['y'],
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
-        h1=im1.size[1]
-        w1=im1.size[0]
-        w1=int(w1/2.0)
-        im1=im1.resize((w1,h1))
+       #h1=im1.size[1]
+       #w1=im1.size[0]
+       #w1=int(w1/2.0)
+        #im1=im1.resize((w1,h1))
         ds.append((im1,label))
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
     return ds

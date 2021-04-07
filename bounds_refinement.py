@@ -7,8 +7,8 @@ import numpy as np
 def get_energy_density(image_path):
     
     image   = cv2.imread(image_path,0)
-    height, width = image.shape[:2]
-    image = cv2.resize(image, (2*width, 1*height))
+    #height, width = image.shape[:2]
+    #image = cv2.resize(image, (2*width, 1*height))
     binary  = cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     #laplacian = cv2.Laplacian(binary.copy(),cv2.CV_32F)
     #laplacian = np.uint8(laplacian)
