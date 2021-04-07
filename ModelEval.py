@@ -3,6 +3,7 @@ import sys
 import os
 #import cv2
 import numpy as np
+import pandas as pd
 #import matplotlib.pyplot as plt
 #import glob
 from PIL import Image, ImageDraw
@@ -29,6 +30,8 @@ def get_ds(image, bounds):
     #w=int(2.0*w)
     #image=img.resize((w,h))
     ds=[]
+    coord=[]
+    labels=[]
     for bound in bounds:
         label=bound['text']
         bound = bound['boundingBox']
@@ -36,13 +39,19 @@ def get_ds(image, bounds):
                        bound["vertices"][0]['y'],
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
+
        #h1=im1.size[1]
        #w1=im1.size[0]
        #w1=int(w1/2.0)
-        #im1=im1.resize((w1,h1))
+       #im1=im1.resize((w1,h1))
         ds.append((im1,label))
+        labels.append(label)
+        coord.append((bound["vertices"][0]['x'],
+                       bound["vertices"][0]['y'],
+                       bound["vertices"][2]['x'],
+                       bound["vertices"][2]['y']))
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
-    return ds
+    return ds,coords,labels
 
 
 class IMGDS(torch.utils.data.Dataset):
@@ -130,7 +139,7 @@ if __name__ =='__main__':
                 bounds = json.load(f)
             #bounds=bounds_refine(bounds,imgpath,ref)
             #print("Characters in Image=",len(bounds))
-            ds=get_ds(imgpath,bounds)
+            ds,coords,labels=get_ds(imgpath,bounds)
             ds_train=IMGDS(label_dict,ds)
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
             train_gen =DataUtils.DeviceDataLoader(train_gen, device)
@@ -140,5 +149,21 @@ if __name__ =='__main__':
             weight.append(len(bounds))
             #os.remove(imgpath)
             #os.remove(jsonpath)
-        ##ASSUMING NEARLY EQUAL CHARACTERS ON EACH PAGE
+            df = pd.DataFrame(list(zip(coords, labels)),columns =['Coordinates', 'Actual'])
+            train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
+            train_gen =DataUtils.DeviceDataLoader(train_gen, device)
+            predic=[]
+            for batch in train_gen:
+                images,labels= batch 
+                with torch.no_grad(): 
+                    out = model(images)
+                _, preds = torch.max(out, dim=1)
+                predic.extend(preds.detach().cpu().numpy().tolist())
+            df['Predicted']=predic
+            csvpath=join(config.pdfdata,"csv/")
+            csvpath=join(csvpath,os.path.splitext(os.path.basename(imgpath))[0])
+            os.system('mkdir -p ' +csvpath)
+            csvpath=join(csvpath,"Incept161OriginalVis.csv")
+            df.to_csv(csvpath,index=False)
+
         print("ref={},   Accuracy Mean on this pdf is {}".format(ref,sum(pdf_acc)/sum(weight)))
