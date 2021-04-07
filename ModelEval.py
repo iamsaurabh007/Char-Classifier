@@ -26,7 +26,7 @@ def get_ds(image, bounds):
     img= Image.open(image)
     h=img.size[1]
     w=img.size[0]
-    w=int(1.3*w)
+    w=int(2.0*w)
     image=img.resize((w,h))
     ds=[]
     for bound in bounds:
@@ -38,7 +38,7 @@ def get_ds(image, bounds):
                        bound["vertices"][2]['y']))
         h1=im1.size[1]
         w1=im1.size[0]
-        w1=int(w1/1.3)
+        w1=int(w1/2.0)
         im1=im1.resize((w1,h1))
         ds.append((im1,label))
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
