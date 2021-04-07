@@ -23,7 +23,11 @@ from bounds_refinement import bounds_refine
 
 
 def get_ds(image, bounds):
-    image = Image.open(image)
+    img= Image.open(image)
+    h=img.size[1]
+    w=img.size[0]
+    w=int(1.3*w)
+    image=img.resize((w,h))
     ds=[]
     for bound in bounds:
         label=bound['text']
@@ -32,6 +36,10 @@ def get_ds(image, bounds):
                        bound["vertices"][0]['y'],
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
+        h1=im1.size[1]
+        w1=im1.size[0]
+        w1=int(w1/1.3)
+        im1=im1.resize((w1,h1))
         ds.append((im1,label))
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
     return ds
@@ -106,7 +114,7 @@ if __name__ =='__main__':
     checkpoint=torch.load(config.checkpath, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     print("MODEL LOADED")
-    model.eval()
+    model.train()
     pdf_acc=[]
     weight=[]
     mypath=join(config.pdfdata,"images")
@@ -120,14 +128,14 @@ if __name__ =='__main__':
             jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
             with open(jsonpath) as f:
                 bounds = json.load(f)
-            bounds=bounds_refine(bounds,imgpath,ref)
+            #bounds=bounds_refine(bounds,imgpath,ref)
             #print("Characters in Image=",len(bounds))
             ds=get_ds(imgpath,bounds)
             ds_train=IMGDS(label_dict,ds)
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
             train_gen =DataUtils.DeviceDataLoader(train_gen, device)
             result = ModelUtils.evaluate(model,train_gen)
-            #print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
+            print("Accuracy on {} page is {}".format(imgpath,result['val_acc']))
             pdf_acc.append(len(bounds)*result['val_acc'])
             weight.append(len(bounds))
             #os.remove(imgpath)
