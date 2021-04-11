@@ -27,4 +27,4 @@ channel=32
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
 checkpath="/home/ubuntu/data/ocr/ModelInceptfinal/epoch-161.pt"
-pdfdata="/home/ubuntu/data/ocr/kdeval/average/"
+pdfdata="/home/ubuntu/data/ocr/kdeval/good/"
