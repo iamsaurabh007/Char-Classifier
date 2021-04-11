@@ -32,6 +32,8 @@ def get_ds(image, bounds):
     ds=[]
     coord=[]
     labels=[]
+    wordid=[]
+    seq=[]
     for bound in bounds:
         label=bound['text']
         bound = bound['boundingBox']
@@ -50,8 +52,11 @@ def get_ds(image, bounds):
                        bound["vertices"][0]['y'],
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
+        wordid.append(bound['idword'])
+        seq.append(bound['sequence'])
+        
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
-    return ds,coord,labels
+    return ds,coord,labels,wordid,seq
 
 
 class IMGDS(torch.utils.data.Dataset):
@@ -131,15 +136,27 @@ if __name__ =='__main__':
     refinement_ratio=[0.5]
     #refinement_ratio=[0.03,0.07,0.1,0.15,0.20,0.3,0.4,0.5]
     for ref in refinement_ratio:
+        coordsagg=[]
+        labelsagg=[]
+        pageagg=[]
+        predicagg=[]
+        wordidagg=[]
+        sequenceagg=[]
+        page_list=[]
         for imgpath in imgpaths:
             with io.open(imgpath, 'rb') as image_file:
                 content = image_file.read()
             jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
             with open(jsonpath) as f:
                 bounds = json.load(f)
-            #bounds=bounds_refine(bounds,imgpath,ref)
+            bounds=bounds_refine(bounds,imgpath,ref)
             #print("Characters in Image=",len(bounds))
-            ds,coords,labels=get_ds(imgpath,bounds)
+            ds,coords,labels,wordid,seq=get_ds(imgpath,bounds)
+            coordsagg.extend(coords)
+            labelsagg.extend(labels)
+            pageagg.extend([os.path.splitext(os.path.basename(imgpath))[0]]*len(labels))
+            wordidagg.extend(wordid)
+            sequenceagg.extend(seq)
             ds_train=IMGDS(label_dict,ds)
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
             train_gen =DataUtils.DeviceDataLoader(train_gen, device)
@@ -149,7 +166,6 @@ if __name__ =='__main__':
             weight.append(len(bounds))
             #os.remove(imgpath)
             #os.remove(jsonpath)
-            df = pd.DataFrame(list(zip(coords, labels)),columns =['Coordinates', 'Actual'])
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
             train_gen =DataUtils.DeviceDataLoader(train_gen, device)
             predic=[]
@@ -160,11 +176,15 @@ if __name__ =='__main__':
                 _, preds = torch.max(out, dim=1)
                 predic.extend(preds.detach().cpu().numpy().tolist())
             predic=[revdict[i] for i in predic]
-            df['Predicted']=predic
-            csvpath=join(config.pdfdata,"csv/")
-            csvpath=join(csvpath,os.path.splitext(os.path.basename(imgpath))[0])
-            os.system('mkdir -p ' +csvpath)
-            csvpath=join(csvpath,"Incept161OriginalVis.csv")
-            df.to_csv(csvpath,index=False)
-
+            predicagg.extend(predic)
+            page_list.append(os.path.splitext(os.path.basename(imgpath))[0])
+        df_main=pd.DataFrame(list(zip(page_list,pdf_acc,weight)),columns =['Page', 'Acc','Chars'])
+        df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,wordidagg,sequenceagg,pageagg)),\
+            columns =['Coordinates', 'Actual','Predicted','Word','Sequence','Page'])
+        csvpath=join(config.pdfdata,"csv/")
+        os.system('mkdir -p ' +csvpath)
+        csvpath2=join(csvpath,"MAINIncept161RefineBinarykdeval.csv")
+        csvpath=join(csvpath,"DEATAILEDIncept161RefineBinarykdeval.csv")
+        df.to_csv(csvpath,index=False)
+        df_main.to_csv(csvpath2,index=False)
         print("ref={},   Accuracy Mean on this pdf is {}".format(ref,sum(pdf_acc)/sum(weight)))

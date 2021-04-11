@@ -17,7 +17,7 @@ def get_energy_density(image_path):
     #energy_density = 1 /  np.log(distance_transform + np.exp(1))
     energy_density = 1 /  (distance_transform + 1)**2
     
-    return energy_density
+    return binary
 
 
 def get_equilibrium_delta(boundry,energy_density ,axis,flag):
@@ -27,9 +27,9 @@ def get_equilibrium_delta(boundry,energy_density ,axis,flag):
     inital_boundry = boundry_energy.shape[1 - axis]  * 0.5
     p=boundry_energy.sum(axis=axis)[::-1]
     if flag=='l':
-        delta=inital_boundry-(p.shape[0]-1-np.argmin(p))
+        delta=inital_boundry-(p.shape[0]-1-np.argmax(p))
     else:
-        delta = inital_boundry - np.argmin(boundry_energy.sum(axis=axis))
+        delta = inital_boundry - np.argmax(boundry_energy.sum(axis=axis))
     #print(inital_boundry)
     #print(delta)
     return delta
@@ -38,6 +38,8 @@ def correct_region(region,energy_density,rat):
     image_height      = energy_density.shape[0]
     image_widht=energy_density.shape[1]
     text=region['text']
+    idword=region['idword']
+    seq=region['sequence']
     
     box = region['boundingBox']["vertices"]
 
@@ -64,12 +66,12 @@ def correct_region(region,energy_density,rat):
         right_delta = get_equilibrium_delta(boundry_right, energy_density,axis=0,flag='r')
         #print(left_delta, right_delta)
 
-        return {'text':text,'boundingBox': {'vertices'  : [{'x':int(box_left-left_delta),'y':box_top},\
+        return {'text':text,'idword':idword,'sequence':seq,'boundingBox': {'vertices'  : [{'x':int(box_left-left_delta),'y':box_top},\
                                                             {'x':int(box_right-right_delta),'y':box_top},\
                                                             {'x':int(box_right-right_delta),'y':box_bottom},\
                                                             {'x':int(box_left-left_delta),'y':box_bottom}]}}
     else:
-        return {'text':text,'boundingBox': {'vertices'  : [{'x':int(box_left-1),'y':box_top},\
+        return {'text':text,'idword':idword,'sequence':seq,'boundingBox': {'vertices'  : [{'x':int(box_left-1),'y':box_top},\
                                                             {'x':int(box_right+1),'y':box_top},\
                                                             {'x':int(box_right+1),'y':box_bottom},\
                                                             {'x':int(box_left-1),'y':box_bottom}]}}
