@@ -78,7 +78,10 @@ class IMGDS(torch.utils.data.Dataset):
         else:
             height=100
             width=int(im.size[0]*100/im.size[1])
-        im=im.resize((width,height), Image.ANTIALIAS)
+        try:
+            im=im.resize((width,height), Image.ANTIALIAS)
+        except:
+            print(im.size[0],im.size[1])
         background = Image.new('RGB', (100, 100), (255, 255, 255))
         offset = (int(round(((100 - width) / 2), 0)), int(round(((100 - height) / 2),0)))
         background.paste(im, offset)
