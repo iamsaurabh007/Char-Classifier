@@ -36,25 +36,21 @@ def get_ds(image, bounds):
     seq=[]
     for bound in bounds:
         label=bound['text']
+        wordid.append(bound['idword'])
+        seq.append(bound['sequence'])
         bound = bound['boundingBox']
         im1 = image.crop((bound["vertices"][0]['x'],
                        bound["vertices"][0]['y'],
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
 
-       #h1=im1.size[1]
-       #w1=im1.size[0]
-       #w1=int(w1/2.0)
-       #im1=im1.resize((w1,h1))
         ds.append((im1,label))
         labels.append(label)
         coord.append((bound["vertices"][0]['x'],
                        bound["vertices"][0]['y'],
                        bound["vertices"][2]['x'],
                        bound["vertices"][2]['y']))
-        wordid.append(bound['idword'])
-        seq.append(bound['sequence'])
-        
+    
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
     return ds,coord,labels,wordid,seq
 
