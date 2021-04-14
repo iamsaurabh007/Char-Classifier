@@ -33,7 +33,7 @@ def get_ds(image, bounds):
     #seq=[]
     bounds=bounds['iou']
     for bound in bounds:
-        if not (bound['ground'] and bound['input']:
+        if not (bound['ground'] and bound['input']):
             continue
         label=bound['text']
         iou=bound['iou']
