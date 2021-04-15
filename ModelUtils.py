@@ -1,5 +1,3 @@
-
-
 import torch
 import torch.cuda as cuda
 import torch.utils.data as data
@@ -19,19 +17,39 @@ import utils
 import config
 import DataUtils
 
+class TripletLoss(nn.Module):
+    def __init__(self, margin=1.0):
+        super(TripletLoss, self).__init__()
+        self.margin = margin
+        
+    def calc_euclidean(self, x1, x2):
+        return (x1 - x2).pow(2).sum(1)
+    
+    def forward(self,out:torch.Tensor,label:torch.Tensor, anchor: torch.Tensor, positive: torch.Tensor, negative: torch.Tensor) -> torch.Tensor:
+        distance_positive = self.calc_euclidean(anchor, positive)
+        distance_negative = self.calc_euclidean(anchor, negative)
+        ce_loss=F.cross_entropy(out, labels)
+        sim_losses = torch.relu(distance_positive - distance_negative + self.margin)
+        losses=ce_loss+torch.mul(sim_losses,config.alpha)
+        return losses.mean()
 
-def training_step(model, batch):
-    images, labels = batch 
-    out = model(images)                  # Generate predictions
-    loss = F.cross_entropy(out, labels) # Calculate loss
+def training_step(model, batch,loss_fn):
+    anchor_images, anchor_labels,positive_images,negative_images = batch 
+    out,embd = model(anchor_images) 
+    _,pos_embd = model(positive_images) 
+    _,neg_embd = model(negative_images) 
+    loss = loss_fn(out,anchor_labels,embd,pos_embd,neg_embd) # Calculate loss
     return loss
     
 def validation_step(model, batch):
-    images, labels = batch 
+    anchor_images, anchor_labels,positive_images,negative_images = batch 
     with torch.no_grad(): 
-        out = model(images)                    # Generate predictions
-        loss = F.cross_entropy(out, labels)   # Calculate loss
-    acc = accuracy(out, labels)           # Calculate accuracy
+        anchor_images, anchor_labels,positive_images,negative_images = batch 
+        out,embd = model(anchor_images) 
+        _,pos_embd = model(positive_images) 
+        _,neg_embd = model(negative_images)  
+        loss = loss_fn(out,anchor_labels,embd,pos_embd,neg_embd)  # Calculate loss
+    acc = accuracy(out, anchor_labels)           # Calculate accuracy
     return {'val_loss': loss, 'val_acc': acc}
         
 def validation_epoch_end(outputs):
@@ -52,17 +70,19 @@ def evaluate(model, val_loader):
     outputs = [validation_step(model,batch) for batch in val_loader]
     return validation_epoch_end(outputs)
 
-def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
+def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func,loss_fn):
     model_dir=config.MODELCHECKPOINT_PATH
     history = []
     optimizer = opt_func(model.parameters(), lr, weight_decay=lr/10.0)
+    loss_fn=TripletLoss()
+    loss_fn.to_device("cuda")
     for epoch in range(epochs):
         # Training Phase 
         running_loss=[]
         cnt=0
         for batch in train_loader:
             optimizer.zero_grad()
-            loss = training_step(model,batch)
+            loss = training_step(model,batch,loss_fn)
             loss.backward()
             optimizer.step()
             running_loss.append(loss.item())

@@ -40,6 +40,6 @@ if __name__ =='__main__':
     #model=Resnet.ResNet50(3,config.num_classes)
     model=InceptFC.FC_Model()
     model=model.to(device)
-    p='runs/Inceptfinalrun/LR'+str(int(100000*l_r))+'BS'+str(batch_size)
+    p='runs/InceptTripletLossrun1/LR'+str(int(100000*l_r))+'BS'+str(batch_size)
     writer = SummaryWriter(p)
     history=ModelUtils.fit(num_epochs,l_r,model,train_gen, valid_gen, opt_func=torch.optim.Adam,writer=writer)

@@ -8,7 +8,7 @@ import utils
 
 class IMGDS(torch.utils.data.Dataset):
     #Reuires a directiory with imgs and json folder in it
-    def __init__(self, label_dict,root_dir,imglist):
+    def __init__(self, label_dict,root_dir,imglist,train=True):
         """
         Args:
             label_dict: mapping from labels to class
@@ -20,6 +20,8 @@ class IMGDS(torch.utils.data.Dataset):
         self.root_dir = root_dir
         self.label_dict=label_dict
         self.images_list=imglist
+        self.labels=self.loadlabel()
+        self.is_train=train
 
     def loadimage(self,index):
         im = Image.open(self.root_dir+"/imgs/"+self.images_list[index]+".jpeg")
@@ -41,22 +43,36 @@ class IMGDS(torch.utils.data.Dataset):
         return image
 
 
-    def loadlabel(self,index):
-        with open(self.root_dir+"/json/"+self.images_list[index]+".json") as f:
-            d= json.load(f)
-            label=d['character']
-            a=np.array(self.label_dict[label])
-            a=torch.from_numpy(a)
-            return a
+    def loadlabel(self):
+        ls=[]
+        for index in range(len(self.images_list)):    
+            with open(self.root_dir+"/json/"+self.images_list[index]+".json") as f:
+                d= json.load(f)
+                label=d['character']
+                ls.append(label)
+        return ls
+
     def __len__(self):
         return len(self.images_list)
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        image=self.loadimage(idx)
-        label=self.loadlabel(idx)
-        return image,label
+        if is_train:
+            anchor_image=self.loadimage(idx)
+            anchor_label=self.labels[idx]
+            positive_list = [i for i,j in enumerate(self.labels) if j==anchor_label]
+            positive_item = random.choice(positive_list)
+            neagtive_list = [i for i,j in enumerate(self.labels) if j!=anchor_label]
+            negative_item = random.choice(negative_list)
+            positive_image=self.loadimage(positive_item)
+            negative_image=self.loadimage(negative_item)
+            a=np.array(self.label_dict[anchor_label])
+            anchor_label=torch.from_numpy(a)
+            return anchor_image,anchor_label,positive_image,negative_image
+        else:
+            anchor_image=self.loadimage(idx)
+            return anchor_image
 
 class DeviceDataLoader():
     """Wrap a dataloader to move data to a device"""
