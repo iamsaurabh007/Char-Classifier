@@ -4,7 +4,7 @@ import torchvision
 import json
 import torch
 import utils
-
+import random
 
 class IMGDS(torch.utils.data.Dataset):
     #Reuires a directiory with imgs and json folder in it
@@ -58,12 +58,12 @@ class IMGDS(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        if is_train:
+        if self.is_train:
             anchor_image=self.loadimage(idx)
             anchor_label=self.labels[idx]
             positive_list = [i for i,j in enumerate(self.labels) if j==anchor_label]
             positive_item = random.choice(positive_list)
-            neagtive_list = [i for i,j in enumerate(self.labels) if j!=anchor_label]
+            negative_list = [i for i,j in enumerate(self.labels) if j!=anchor_label]
             negative_item = random.choice(negative_list)
             positive_image=self.loadimage(positive_item)
             negative_image=self.loadimage(negative_item)
