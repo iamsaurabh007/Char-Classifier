@@ -82,12 +82,12 @@ class FC_Model(nn.Module):
         x=self.conv1(x)
         #print(x.shape)
         #x=x.abs()
-        x=x.sum(dim=(2,3))
+        embd=x.mean(dim=(2,3))
         #print(x.shape)
-        x=self.linearblock1(x)
+        x=self.linearblock1(embd)
         x=self.linearblock2(x)
         #print(x.shape)
         x=self.linear2(x)
         #print("FINAL TENSOR")
         #print(x.shape)
-        return x
+        return x,embd
