@@ -16,6 +16,7 @@ import torch.nn.functional as F
 import utils
 import config
 import DataUtils
+from tqdm import tqdm
 
 class TripletLoss(nn.Module):
     def __init__(self, margin=1.0):
@@ -76,11 +77,11 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
     history = []
     optimizer = opt_func(model.parameters(), lr, weight_decay=lr/10.0)
     loss_fn=TripletLoss()
-    for epoch in range(epochs):
+    for epoch in tqdm(range(epochs),desc="TOTAL EPOCH"):
         # Training Phase 
         running_loss=[]
         cnt=0
-        for batch in train_loader:
+        for batch in tqdm(train_loader,desc="TOTAL BATCHES"):
             optimizer.zero_grad()
             loss = training_step(model,batch,loss_fn)
             loss.backward()

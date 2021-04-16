@@ -11,10 +11,10 @@ MODELCHECKPOINT_PATH="/home/ubuntu/data/ocr/ModelInceptTripletrun1"
 device=None
 
 #USED IN DATALOADER
-batch_size=32
+batch_size=16
 shuffle=True
-num_workers=6
-alpha=0.1         ####loss=cross entropy loss + alpha * similarity loss
+num_workers=7
+alpha=0.01         ####loss=cross entropy loss + alpha * similarity loss
 #USED IN MODEL
 learning_rate=0.001
 num_epochs=500
