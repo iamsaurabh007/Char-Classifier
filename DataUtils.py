@@ -76,7 +76,7 @@ class IMGDS(torch.utils.data.Dataset):
             positive_item = random.choice(self.chars_cw[anchor_label])
            # negative_list = [i for i,j in enumerate(self.labels) if j!=anchor_label]
             neg_class=random.choice(range(len(self.label_dict)))
-            while neg_class!=anchor_label:
+            while neg_class==anchor_label:
                 neg_class=random.choice(range(len(self.label_dict)))
             negative_item = random.choice(self.chars_cw[neg_class])
             positive_image=self.loadimage(positive_item)

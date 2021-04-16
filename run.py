@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 if __name__ =='__main__':
 #def RUN(l_r,batch_size):
     os.system('mkdir -p ' +config.MODELCHECKPOINT_PATH)
-    random.seed(10)
+    #random.seed(10)
     dir_path=config.data_dir_path
     device=config.device
     num_epochs=config.num_epochs
