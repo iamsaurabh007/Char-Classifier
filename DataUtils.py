@@ -5,6 +5,7 @@ import json
 import torch
 import utils
 import random
+import config
 
 class IMGDS(torch.utils.data.Dataset):
     #Reuires a directiory with imgs and json folder in it
@@ -21,6 +22,8 @@ class IMGDS(torch.utils.data.Dataset):
         self.label_dict=label_dict
         self.images_list=imglist
         self.labels=self.loadlabel()
+        self.chars_cw=[]    #classwise characters index list
+        self.load_chars_list()
         self.is_train=train
 
     def loadimage(self,index):
@@ -51,6 +54,13 @@ class IMGDS(torch.utils.data.Dataset):
                 label=d['character']
                 ls.append(label)
         return ls
+    def load_chars_list(self):
+        for i in range(len(self.label_dict)):
+            p=[]
+            self.chars_cw.append(p)
+        for i,j in enumerate(self.labels):
+            self.chars_cw[self.label_dict[j]].append(i)
+
 
     def __len__(self):
         return len(self.images_list)
@@ -61,13 +71,17 @@ class IMGDS(torch.utils.data.Dataset):
         if self.is_train:
             anchor_image=self.loadimage(idx)
             anchor_label=self.labels[idx]
-            positive_list = [i for i,j in enumerate(self.labels) if j==anchor_label]
-            positive_item = random.choice(positive_list)
-            negative_list = [i for i,j in enumerate(self.labels) if j!=anchor_label]
-            negative_item = random.choice(negative_list)
+            anchor_label=self.label_dict[anchor_label]
+           # positive_list = [i for i,j in enumerate(self.labels) if j==anchor_label]
+            positive_item = random.choice(self.chars_cw[anchor_label])
+           # negative_list = [i for i,j in enumerate(self.labels) if j!=anchor_label]
+            neg_class=random.choice(range(len(self.label_dict)))
+            while neg_class!=anchor_label:
+                neg_class=random.choice(range(len(self.label_dict)))
+            negative_item = random.choice(self.chars_cw[neg_class])
             positive_image=self.loadimage(positive_item)
             negative_image=self.loadimage(negative_item)
-            a=np.array(self.label_dict[anchor_label])
+            a=np.array(anchor_label)
             anchor_label=torch.from_numpy(a)
             return anchor_image,anchor_label,positive_image,negative_image
         else:
