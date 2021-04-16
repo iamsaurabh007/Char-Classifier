@@ -42,7 +42,7 @@ def training_step(model, batch,loss_fn):
     loss = loss_fn(out,anchor_labels,embd,pos_embd,neg_embd) # Calculate loss
     return loss
     
-def validation_step(model, batch):
+def validation_step(model, batch,loss_fn):
     anchor_images, anchor_labels,positive_images,negative_images = batch 
     with torch.no_grad(): 
         anchor_images, anchor_labels,positive_images,negative_images = batch 
@@ -67,8 +67,8 @@ def accuracy(outputs, labels):
     _, preds = torch.max(outputs, dim=1)
     return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
-def evaluate(model, val_loader):
-    outputs = [validation_step(model,batch) for batch in val_loader]
+def evaluate(model, val_loader,loss_fn):
+    outputs = [validation_step(model,batch,loss_fn) for batch in val_loader]
     return validation_epoch_end(outputs)
 
 def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
@@ -93,7 +93,7 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
         print("Training done at epoch",epoch,"training_loss=",loss_mean)
         writer.add_scalar('training loss per epoch',loss_mean,epoch)
         # Validation phase
-        result = evaluate(model, val_loader)
+        result = evaluate(model, val_loader,loss_fn)
         writer.add_scalar('validation loss per epoch',result['val_loss'],epoch)
         writer.add_scalar('validation acc per epoch',result['val_acc'],epoch)
         epoch_end(epoch, result)
