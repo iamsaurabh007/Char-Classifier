@@ -41,7 +41,7 @@ def get_images_list(mypath,number=None):
         onlyfiles=onlyfiles[:number]   
     print("Images Available Train={}, Valid={} ".format(int(0.95*len(onlyfiles)),int(0.05*len(onlyfiles)))) 
     return onlyfiles[:int(0.95*len(onlyfiles))],onlyfiles[int(0.95*len(onlyfiles)):]
-def get_onlytrain_list():
+def get_onlytrain_list(mypath,number=None):
     onlyfiles = [f[:-5] for f in listdir(mypath) if isfile(join(mypath, f))]
     random.shuffle(onlyfiles)
     if number:

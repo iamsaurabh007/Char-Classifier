@@ -41,4 +41,4 @@ if __name__ =='__main__':
     densemodel=densemodel.to(device)
     p='runs/ConvPartTraining/LR'+str(int(100000*l_r))+'BS'+str(batch_size)
     writer = SummaryWriter(p)
-    ModelUtils.fit(num_epochs,l_r,convmodel,densemodel,train_gen, valid_gen, opt_func=torch.optim.Adam,writer=writer)
+    ModelUtils.fit(num_epochs,l_r,convmodel,densemodel,train_gen, None, opt_func=torch.optim.Adam,writer=writer)
