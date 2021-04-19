@@ -116,30 +116,21 @@ if __name__ =='__main__':
     revdict={}
     for i,sym in enumerate(config.symbols):
         revdict[i]=sym
-    #model=InceptFC.FC_Model()    
+    model=InceptFC.FC_Model()    
     #model=Resnet.ResNet50(3,97)
-    #model.to(device)
-    #print(config.checkpath)
-    #checkpoint=torch.load(config.checkpath, map_location=device)
-    #model.load_state_dict(checkpoint['model_state_dict'])
-    #print("MODEL LOADED")
-    #model.train()
+    model.to(device)
+    print(config.checkpath)
+    checkpoint=torch.load(config.checkpath, map_location=device)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    print("MODEL LOADED")
+    model.train()
     pdf_acc=[]
     weight=[]
     mypath=join(config.pdfdata,"images")
     imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
     refinement_ratio=[0.5]
     #refinement_ratio=[0.03,0.07,0.1,0.15,0.20,0.3,0.4,0.5]
-    for ref in range(1,121,5):
-        model=InceptFC.FC_Model()    
-    #model=Resnet.ResNet50(3,97)
-        model.to(device)
-        checkpath="/home/ubuntu/data/ocr/ModelInceptTripletrun1/epoch-"+str(ref)+".pt"
-        print(config.checkpath)
-        checkpoint=torch.load(config.checkpath, map_location=device)
-        model.load_state_dict(checkpoint['model_state_dict'])
-        #print("MODEL LOADED")
-        model.train()
+    for ref in range(1):
         coordsagg=[]
         labelsagg=[]
         pageagg=[]
@@ -179,19 +170,19 @@ if __name__ =='__main__':
                     val_acc=torch.stack(batch_accs).mean() 
                     _, preds = torch.max(out, dim=1)
                 predic.extend(preds.detach().cpu().numpy().tolist())
-           #print("Accuracy on {} page is {}".format(imgpath,val_acc))
+            print("Accuracy on {} page is {}".format(imgpath,val_acc))
             pdf_acc.append(len(bounds)*val_acc)
             weight.append(len(bounds))
-            #predic=[revdict[i] for i in predic]
-            #predicagg.extend(predic)
-            #page_list.append(os.path.splitext(os.path.basename(imgpath))[0])
-        #df_main=pd.DataFrame(list(zip(page_list,pdf_acc,weight)),columns =['Page', 'Acc','Chars'])
-        #df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,wordidagg,sequenceagg,pageagg)),\
-        #   columns =['Coordinates', 'Actual','Predicted','Word','Sequence','Page'])
-        #csvpath=join(config.pdfdata,"csv/")
-        #os.system('mkdir -p ' +csvpath)
-        #csvpath2=join(csvpath,"MAINIncept161RefineBinaryTripletkdeval.csv")
-        #csvpath=join(csvpath,"DEATAILEDIncept161RefineBinaryTripletkdeval.csv")
-        #df.to_csv(csvpath,index=False)
-        #df_main.to_csv(csvpath2,index=False)
+            predic=[revdict[i] for i in predic]
+            predicagg.extend(predic)
+            page_list.append(os.path.splitext(os.path.basename(imgpath))[0])
+        df_main=pd.DataFrame(list(zip(page_list,pdf_acc,weight)),columns =['Page', 'Acc','Chars'])
+        df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,wordidagg,sequenceagg,pageagg)),\
+           columns =['Coordinates', 'Actual','Predicted','Word','Sequence','Page'])
+        csvpath=join(config.pdfdata,"csv/")
+        os.system('mkdir -p ' +csvpath)
+        csvpath2=join(csvpath,"MAINIncept161RefineBinaryTripletkdeval.csv")
+        csvpath=join(csvpath,"DEATAILEDIncept161RefineBinaryTripletkdeval.csv")
+        df.to_csv(csvpath,index=False)
+        df_main.to_csv(csvpath2,index=False)
         print("ref={},   Accuracy Mean on this pdf is {}".format(ref,sum(pdf_acc)/sum(weight)))

@@ -26,5 +26,5 @@ channel=32
 ####MODELEVALUATION
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
-checkpath="/home/ubuntu/data/ocr/ModelInceptTripletrun1/epoch-64.pt"
+checkpath="/home/ubuntu/data/ocr/ModelInceptTripletrun1/epoch-100.pt"
 pdfdata="/home/ubuntu/data/ocr/kdeval/average/"
