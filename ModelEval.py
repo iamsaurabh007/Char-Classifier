@@ -123,7 +123,7 @@ if __name__ =='__main__':
     #checkpoint=torch.load(config.checkpath, map_location=device)
     #model.load_state_dict(checkpoint['model_state_dict'])
     #print("MODEL LOADED")
-    model.train()
+    #model.train()
     pdf_acc=[]
     weight=[]
     mypath=join(config.pdfdata,"images")
@@ -139,6 +139,7 @@ if __name__ =='__main__':
         checkpoint=torch.load(config.checkpath, map_location=device)
         model.load_state_dict(checkpoint['model_state_dict'])
         #print("MODEL LOADED")
+        model.train()
         coordsagg=[]
         labelsagg=[]
         pageagg=[]
