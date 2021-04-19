@@ -86,7 +86,11 @@ class IMGDS(torch.utils.data.Dataset):
             return anchor_image,anchor_label,positive_image,negative_image
         else:
             anchor_image=self.loadimage(idx)
-            return anchor_image
+            anchor_label=self.labels[idx]
+            anchor_label=self.label_dict[anchor_label]
+            a=np.array(anchor_label)
+            anchor_label=torch.from_numpy(a)
+            return anchor_image,anchor_label
 
 class DeviceDataLoader():
     """Wrap a dataloader to move data to a device"""

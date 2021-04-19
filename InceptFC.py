@@ -62,16 +62,16 @@ class Conv_block(nn.Module):
         #print(b.shape)
         return b
     
-class FC_Model(nn.Module):
+class Convolutional_block(nn.Module):
     def __init__(self):
-        super(FC_Model,self).__init__()
+        super(Convolutional_block,self).__init__()
         self.conv_block1=Conv_block()
         self.conv_block2=Conv_block(out_chnl*6)
         self.conv1=nn.Conv2d(in_channels=out_chnl*6,out_channels=512,kernel_size=1)
-        self.linearblock1=LINEAR_BLOCK(in_features=512, out_features=512, bias=True)
-        self.linearblock2=LINEAR_BLOCK(in_features=512, out_features=256, bias=True)
-        self.linear2=nn.Linear(in_features=256, out_features=config.num_classes, bias=True)
-        self.loss_fn=nn.CrossEntropyLoss()
+        #self.linearblock1=LINEAR_BLOCK(in_features=512, out_features=512, bias=True)
+        #self.linearblock2=LINEAR_BLOCK(in_features=512, out_features=256, bias=True)
+        #self.linear2=nn.Linear(in_features=256, out_features=config.num_classes, bias=True)
+       #self.loss_fn=nn.CrossEntropyLoss()
     
     def forward(self,x):
         #print(x.shape)
@@ -84,10 +84,28 @@ class FC_Model(nn.Module):
         #x=x.abs()
         embd=x.mean(dim=(2,3))
         #print(x.shape)
-        x=self.linearblock1(embd)
+        #x=self.linearblock1(embd)
+        #x=self.linearblock2(x)
+        #print(x.shape)
+        #x=self.linear2(x)
+        #print("FINAL TENSOR")
+        #print(x.shape)
+        return embd
+
+class FC_block(nn.Module):
+    def __init__(self):
+        super(FC_block,self).__init__()
+    
+        self.linearblock1=LINEAR_BLOCK(in_features=512, out_features=512, bias=True)
+        self.linearblock2=LINEAR_BLOCK(in_features=512, out_features=256, bias=True)
+        self.linear2=nn.Linear(in_features=256, out_features=config.num_classes, bias=True)
+       #self.loss_fn=nn.CrossEntropyLoss()
+    
+    def forward(self,x):
+        x=self.linearblock1(x)
         x=self.linearblock2(x)
         #print(x.shape)
         x=self.linear2(x)
         #print("FINAL TENSOR")
         #print(x.shape)
-        return x,embd
+        return x
