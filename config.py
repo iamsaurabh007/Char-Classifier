@@ -27,4 +27,4 @@ channel=32
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
 checkpath="/home/ubuntu/data/ocr/ModelInceptTripletrun1/epoch-100.pt"
-pdfdata="/home/ubuntu/data/ocr/kdeval/average/"
+pdfdata="/home/ubuntu/craft_benchmark/"
