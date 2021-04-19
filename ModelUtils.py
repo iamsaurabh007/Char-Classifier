@@ -104,7 +104,7 @@ def fit(epochs, lr, convmodel,densemodel, train_loader, val_loader,writer,opt_fu
         #history.append(result)
         torch.save({
                     'epoch': epoch,
-                    'model_state_dict': model.state_dict(),
+                    'model_state_dict':convmodel.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'loss': loss_mean,
                     }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
