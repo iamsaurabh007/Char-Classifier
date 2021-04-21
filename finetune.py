@@ -36,11 +36,13 @@ def get_ds(image, bounds):
     for bound in bounds["regions"]:
         label=bound['text']
         bound = bound['boundingBox']
-        im1 = image.crop((bound["vertices"][0]['x'],
-                       bound["vertices"][0]['y'],
-                       bound["vertices"][2]['x'],
-                       bound["vertices"][2]['y']))
-
+        xmin=min(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
+        xmax=max(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
+        ymin=min(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
+        ymax=max(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
+        if xmax-xmin==0 or ymax-ymin==0:
+            continue
+        im1 = image.crop(xmin,ymin,xmax,ymax)
         ds.append((im1,label))
         
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
