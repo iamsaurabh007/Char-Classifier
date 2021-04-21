@@ -42,7 +42,7 @@ def get_ds(image, bounds):
         ymax=max(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
         if xmax-xmin==0 or ymax-ymin==0:
             continue
-        im1 = image.crop(xmin,ymin,xmax,ymax)
+        im1 = image.crop((xmin,ymin,xmax,ymax))
         ds.append((im1,label))
         
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
