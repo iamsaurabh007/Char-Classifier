@@ -22,6 +22,7 @@ import torch
 import utils
 from bounds_refinement import bounds_refine
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 
 def get_ds(image, bounds):
@@ -31,14 +32,9 @@ def get_ds(image, bounds):
     #w=int(2.0*w)
     #image=img.resize((w,h))
     ds=[]
-    coord=[]
-    labels=[]
-    wordid=[]
-    seq=[]
-    for bound in bounds:
+ 
+    for bound in bounds["regions"]:
         label=bound['text']
-        wordid.append(bound['idword'])
-        seq.append(bound['sequence'])
         bound = bound['boundingBox']
         im1 = image.crop((bound["vertices"][0]['x'],
                        bound["vertices"][0]['y'],
@@ -46,12 +42,7 @@ def get_ds(image, bounds):
                        bound["vertices"][2]['y']))
 
         ds.append((im1,label))
-        labels.append(label)
-        coord.append((bound["vertices"][0]['x'],
-                       bound["vertices"][0]['y'],
-                       bound["vertices"][2]['x'],
-                       bound["vertices"][2]['y']))
-    
+        
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
     return ds
 
@@ -85,13 +76,13 @@ if __name__ =='__main__':
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),lr=config.learning_rate, weight_decay=config.learning_rate/10)
     mypath=join(config.pdfdata,"fine_tuning_data")
     imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
-    myvalpath="/home/ubuntu/data/ocrkdeval/good/images/"
+    myvalpath="/home/ubuntu/data/ocr/kdeval/good/images/"
     valid_paths = [join(myvalpath, f) for f in listdir(myvalpath) if isfile(join(myvalpath, f))]
     refinement_ratio=[0.5]
     checkpath=os.path.dirname(config.checkpath)
     checkpath=join(checkpath,"FineTune")
     os.system('mkdir -p ' +checkpath)
-    p='runs/Inceptfinalrun/fine_tune/LR'+str(int(100000*l_r))+'BS'+str(batch_size)
+    p='runs/Inceptfinalrun/fine_tune/LR'+str(int(100000*config.learning_rate))+'BS'+str(4)
     writer = SummaryWriter(p)
 
     for epoch_fine in range(config.num_epochs):
@@ -100,16 +91,16 @@ if __name__ =='__main__':
         for imgpath in tqdm(imgpaths,desc="TRAIN"):
             with io.open(imgpath, 'rb') as image_file:
                 content = image_file.read()
-            jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+            jsonpath=config.pdfdata+"gv_ft_json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
             with open(jsonpath) as f:
                 bounds = json.load(f)
-            bounds=bounds_refine(bounds,imgpath,0.48)
+            
             #print("Characters in Image=",len(bounds))
             ds=get_ds(imgpath,bounds)
-            ds_train=DataUtils.IMGDS(label_dict,ds)
+            ds_train=DataUtils.EVALIMGDS(label_dict,ds)
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
             train_gen =DataUtils.DeviceDataLoader(train_gen, device)
-            result = ModelUtils.fit_fine(model,train_gen)
+            result = ModelUtils.fit_fine(model,train_gen,optimizer)
             loss_list.append(result.item())
             weight.append(len(bounds))
 

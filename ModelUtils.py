@@ -86,7 +86,7 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
                     }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
     return history
 
-def fit_fine(lr, model, train_loader,writer,optimizer):
+def fit_fine( model, train_loader,optimizer):
     ls=[]
     for batch in train_loader:
         optimizer.zero_grad()
