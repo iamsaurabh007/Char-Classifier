@@ -75,13 +75,13 @@ class EVALIMGDS(torch.utils.data.Dataset):
 
     def loadimage(self,index):
         im = self.ds[index][0]
-        if im.size[0]>im.size[1]:
-            width=100
-            height=int(im.size[1]*100/im.size[0])
-        else:
-            height=100
-            width=int(im.size[0]*100/im.size[1])
         try:
+            if im.size[0]>im.size[1]:
+                width=100
+                height=int(im.size[1]*100/im.size[0])
+            else:
+                height=100
+                width=int(im.size[0]*100/im.size[1])
             im=im.resize((width,height), Image.ANTIALIAS)
         except:
             print(im.size[0],im.size[1])
