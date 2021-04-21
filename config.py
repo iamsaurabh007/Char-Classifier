@@ -16,7 +16,7 @@ shuffle=True
 num_workers=6
 
 #USED IN MODEL
-learning_rate=0.001
+learning_rate=0.0005
 num_epochs=500
 
 
@@ -27,4 +27,4 @@ channel=32
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
 checkpath="/home/ubuntu/data/ocr/ModelInceptfinal/epoch-161.pt"
-pdfdata="/home/ubuntu/craft_benchmark/"
+pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"

@@ -85,3 +85,14 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
                     'loss': loss_mean,
                     }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
     return history
+
+def fit_fine(lr, model, train_loader,writer,optimizer):
+    ls=[]
+    for batch in train_loader:
+        optimizer.zero_grad()
+        loss = training_step(model,batch)
+        loss.backward()
+        optimizer.step()
+        ls.append(loss)
+    return torch.stack(ls).mean()
+
