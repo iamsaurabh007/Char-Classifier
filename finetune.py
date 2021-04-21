@@ -21,6 +21,7 @@ import json
 import torch
 import utils
 from bounds_refinement import bounds_refine
+from tqdm import tqdm
 
 
 def get_ds(image, bounds):
@@ -96,7 +97,7 @@ if __name__ =='__main__':
     for epoch_fine in range(config.num_epochs):
         loss_list=[]
         weight=[]
-        for imgpath in imgpaths:
+        for imgpath in tqdm(imgpaths,desc="TRAIN"):
             with io.open(imgpath, 'rb') as image_file:
                 content = image_file.read()
             jsonpath=config.pdfdata+"json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
@@ -129,7 +130,7 @@ if __name__ =='__main__':
         ####### CHECK FOR VALIDATION+
         pdf_acc=[]
         weight=[]
-        for imgpath in valid_paths:
+        for imgpath in tqdm(valid_paths,desc="TEST"):
             with io.open(imgpath, 'rb') as image_file:
                 content = image_file.read()
             jsonpath="/home/ubuntu/data/ocrkdeval/good/json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
