@@ -126,7 +126,7 @@ if __name__ =='__main__':
         for imgpath in tqdm(valid_paths,desc="TEST"):
             with io.open(imgpath, 'rb') as image_file:
                 content = image_file.read()
-            jsonpath="/home/ubuntu/data/ocrkdeval/good/json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+            jsonpath="/home/ubuntu/data/ocr/kdeval/good/json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
             with open(jsonpath) as f:
                 bounds = json.load(f)
             bounds=bounds_refine(bounds,imgpath,0.48)
