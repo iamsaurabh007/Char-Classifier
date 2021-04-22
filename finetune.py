@@ -33,7 +33,7 @@ def get_ds(image, bounds):
     #image=img.resize((w,h))
     ds=[]
  
-    for bound in bounds["regions"]:
+    for bound in bounds:
         label=bound['text']
         bound = bound['boundingBox']
         xmin=min(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
@@ -98,7 +98,7 @@ if __name__ =='__main__':
                 bounds = json.load(f)
             
             #print("Characters in Image=",len(bounds))
-            ds=get_ds(imgpath,bounds)
+            ds=get_ds(imgpath,bounds['regions'])
             ds_train=DataUtils.EVALIMGDS(label_dict,ds)
             train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
             train_gen =DataUtils.DeviceDataLoader(train_gen, device)
