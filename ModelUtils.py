@@ -1,5 +1,3 @@
-
-
 import torch
 import torch.cuda as cuda
 import torch.utils.data as data
@@ -18,7 +16,7 @@ import torch.nn.functional as F
 import utils
 import config
 import DataUtils
-
+from tqdm import tqdm
 
 def training_step(model, batch):
     images, labels = batch 
@@ -88,7 +86,7 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
 
 def fit_fine( model, train_loader,optimizer):
     ls=[]
-    for batch in train_loader:
+    for batch in tqdm(train_loader,desc="BATCHES FINETUNE"):
         optimizer.zero_grad()
         loss = training_step(model,batch)
         loss.backward()

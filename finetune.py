@@ -25,7 +25,7 @@ from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
 
-def get_ds(image, bounds):
+def get_ds(image,bounds):
     image= Image.open(image)
     #h=img.size[1]
     #w=img.size[0]
@@ -76,37 +76,23 @@ if __name__ =='__main__':
                 param.requires_grad = True
 
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),lr=config.learning_rate, weight_decay=config.learning_rate/10)
-    mypath=join(config.pdfdata,"fine_tuning_data")
-    imgpaths = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
+    finepath=config.data_dir_path
     myvalpath="/home/ubuntu/data/ocr/kdeval/good/images/"
     valid_paths = [join(myvalpath, f) for f in listdir(myvalpath) if isfile(join(myvalpath, f))]
     refinement_ratio=[0.5]
     checkpath=os.path.dirname(config.checkpath)
     checkpath=join(checkpath,"FineTune")
     os.system('mkdir -p ' +checkpath)
-    p='runs/Inceptfinalrun/fine_tune/LR'+str(int(100000*config.learning_rate))+'BS'+str(4)
+    p='runs/Inceptfinalrun/fine_tune2/LR'+str(int(100000*config.learning_rate))+'BS'+str(4)
     writer = SummaryWriter(p)
-
+    fineds=[f for f in listdir(finepath) if isfile(join(finepath, f))]
     for epoch_fine in range(config.num_epochs):
-        loss_list=[]
-        weight=[]
-        for imgpath in tqdm(imgpaths,desc="TRAIN"):
-            with io.open(imgpath, 'rb') as image_file:
-                content = image_file.read()
-            jsonpath=config.pdfdata+"gv_ft_json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
-            with open(jsonpath) as f:
-                bounds = json.load(f)
-            
-            #print("Characters in Image=",len(bounds))
-            ds=get_ds(imgpath,bounds['regions'])
-            ds_train=DataUtils.EVALIMGDS(label_dict,ds)
-            train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
-            train_gen =DataUtils.DeviceDataLoader(train_gen, device)
-            result = ModelUtils.fit_fine(model,train_gen,optimizer)
-            loss_list.append(result.item())
-            weight.append(len(bounds))
-
-        loss_epoch=sum([weight[i]*loss_list[i] for i in range(len(weight))])/sum(weight)
+        random.shuffle(fineds)
+        ds_train=DataUtils.FINEIMGDS(label_dict,finepath,fineds)
+        train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
+        train_gen =DataUtils.DeviceDataLoader(train_gen, device)
+        result = ModelUtils.fit_fine(model,train_gen,optimizer)
+        loss_epoch=result.item()
         print("MEAN LOSS ON EPOCH {} is : {}".format(epoch_fine,loss_epoch))
         ## SAVE WEIGHT AFTER FINETUNE PER EPOCH
         torch.save({
