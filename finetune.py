@@ -81,7 +81,7 @@ if __name__ =='__main__':
     valid_paths = [join(myvalpath, f) for f in listdir(myvalpath) if isfile(join(myvalpath, f))]
     refinement_ratio=[0.5]
     checkpath=os.path.dirname(config.checkpath)
-    checkpath=join(checkpath,"FineTune")
+    checkpath=join(checkpath,"FineTune2")
     os.system('mkdir -p ' +checkpath)
     p='runs/Inceptfinalrun/fine_tune2/LR'+str(int(100000*config.learning_rate))+'BS'+str(4)
     writer = SummaryWriter(p)
