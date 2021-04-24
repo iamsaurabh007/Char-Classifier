@@ -16,7 +16,7 @@ shuffle=True
 num_workers=6
 
 #USED IN MODEL
-learning_rate=0.0005
+learning_rate=0.0001
 num_epochs=500
 
 

@@ -90,7 +90,7 @@ if __name__ =='__main__':
     for epoch_fine in range(config.num_epochs):
         random.shuffle(fineds)
         ds_train=DataUtils.FINEIMGDS(label_dict,finepath,fineds)
-        train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
+        train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=16,shuffle=True,num_workers =6,pin_memory=True)
         train_gen =DataUtils.DeviceDataLoader(train_gen, device)
         result = ModelUtils.fit_fine(model,train_gen,optimizer)
         loss_epoch=result.item()
