@@ -23,6 +23,7 @@ import utils
 from bounds_refinement import bounds_refine
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
+import random
 
 
 def get_ds(image,bounds):
