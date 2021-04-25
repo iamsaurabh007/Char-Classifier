@@ -50,7 +50,12 @@ def get_ds(image,bounds):
     return ds
 
 
-if __name__ =='__main__':
+#if __name__ =='__main__':
+def RUN(batchsize,lr):
+    #batchsize=config.batchsize
+    #lr=config.learning_rate
+    #num_epochs=config.num_epochs
+    num_epochs=50
     device=config.device
     if device==None:
         device = utils.get_default_device()
@@ -76,7 +81,7 @@ if __name__ =='__main__':
             for param in child.parameters():
                 param.requires_grad = True
 
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),lr=config.learning_rate, weight_decay=config.learning_rate/10)
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),lr=lr, weight_decay=lr/10.)
     finepath=config.data_dir_path
     myvalpath="/home/ubuntu/data/ocr/kdeval/good/images/"
     valid_paths = [join(myvalpath, f) for f in listdir(myvalpath) if isfile(join(myvalpath, f))]
@@ -84,25 +89,26 @@ if __name__ =='__main__':
     checkpath=os.path.dirname(config.checkpath)
     checkpath=join(checkpath,"FineTune2")
     os.system('mkdir -p ' +checkpath)
-    p='runs/Inceptfinalrun/fine_tune2/LR'+str(int(100000*config.learning_rate))+'BS'+str(4)
+    p='runs/Inceptfinalrun/hypergridfine_tune/LR'+str(int(1000000*lr))+'BS'+str(batchsize)
     writer = SummaryWriter(p)
     fineds=[f for f in listdir(finepath) if isfile(join(finepath, f))]
-    for epoch_fine in range(config.num_epochs):
+    for epoch_fine in range(num_epochs):
         random.shuffle(fineds)
         ds_train=DataUtils.FINEIMGDS(label_dict,finepath,fineds)
-        train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=16,shuffle=True,num_workers =6,pin_memory=True)
+        train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=batchsize,shuffle=True,num_workers =6,pin_memory=True)
         train_gen =DataUtils.DeviceDataLoader(train_gen, device)
         result = ModelUtils.fit_fine(model,train_gen,optimizer)
         loss_epoch=result.item()
         print("MEAN LOSS ON EPOCH {} is : {}".format(epoch_fine,loss_epoch))
         ## SAVE WEIGHT AFTER FINETUNE PER EPOCH
+        '''
         torch.save({
                     'epoch': epoch_fine,
                     'model_state_dict': model.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'loss': loss_epoch,
                     }, os.path.join(checkpath, 'fine-epoch-{}.pt'.format(epoch_fine)))
-
+        '''
         ## WRITER TENSORBOARD
         writer.add_scalar('Training loss per epoch',loss_epoch,epoch_fine)
     
