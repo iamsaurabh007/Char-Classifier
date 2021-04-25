@@ -106,3 +106,16 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
                     'loss': loss_mean,
                     }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
     return history
+
+
+def fit_fine( model, train_loader,optimizer):
+    ls=[]
+    loss_fn=TripletLoss()
+    for batch in tqdm(train_loader,desc="BATCHES FINETUNE"):
+        optimizer.zero_grad()
+        loss = training_step(model,batch,loss_fn)
+        loss.backward()
+        optimizer.step()
+        ls.append(loss)
+    return torch.stack(ls).mean()
+

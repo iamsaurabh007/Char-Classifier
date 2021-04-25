@@ -173,11 +173,11 @@ if __name__ =='__main__':
                 with torch.no_grad(): 
                     out,_ = model(images)
                     batch_accs.append(ModelUtils.accuracy(out,labels))
-                    val_acc=torch.stack(batch_accs).mean() 
                     _, preds = torch.max(out, dim=1)
                 predic.extend(preds.detach().cpu().numpy().tolist())
             predic=[revdict[i] for i in predic]
             predicagg.extend(predic)
+            val_acc=torch.stack(batch_accs).mean().item()
             print("Accuracy on {} page is {}".format(imgpath,val_acc))
             pdf_acc.append(len(bounds)*val_acc)
             weight.append(len(bounds))

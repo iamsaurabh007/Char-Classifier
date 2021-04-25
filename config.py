@@ -5,7 +5,8 @@ symbols.append(u"\u2122")
 symbols.append(" ")
 num_classes=len(symbols)
 
-data_dir_path="/home/ubuntu/data/ocr/out"
+#data_dir_path="/home/ubuntu/data/ocr/out"
+data_dir_path="/home/ubuntu/craft_benchmark/fine_tune/fine_tune_sampled_ds"
 csv_path='/home/ubuntu/Character-Classifier/FC/hypergridcsv'
 MODELCHECKPOINT_PATH="/home/ubuntu/data/ocr/ModelInceptTripletrun1"
 device=None
@@ -27,4 +28,4 @@ channel=32
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
 checkpath="/home/ubuntu/data/ocr/ModelInceptTripletrun1/epoch-100.pt"
-pdfdata="/home/ubuntu/craft_benchmark/"
+pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
