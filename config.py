@@ -6,7 +6,7 @@ symbols.append(" ")
 num_classes=len(symbols)
 
 #data_dir_path="/home/ubuntu/data/ocr/out"
-data_dir_path="/home/ubuntu/craft_benchmark/fine_tune/fine_tune_sampled100_ds"
+data_dir_path="/home/ubuntu/craft_benchmark/fine_tune/fine_tune_sampled_ds"
 csv_path='/home/ubuntu/Character-Classifier/FC/hypergridcsv'
 MODELCHECKPOINT_PATH="/home/ubuntu/data/ocr/ModelInceptTripletrun1"
 device=None
@@ -17,7 +17,7 @@ shuffle=True
 num_workers=7
 alpha=0.01         ####loss=cross entropy loss + alpha * similarity loss
 #USED IN MODEL
-learning_rate=0.001
+learning_rate=0.00001
 num_epochs=500
 
 

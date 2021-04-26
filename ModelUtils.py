@@ -107,13 +107,18 @@ def fit(epochs, lr, model, train_loader, val_loader,writer,opt_func):
                     }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
     return history
 
+def fine_training_step(model, batch):
+    anchor_images, anchor_labels= batch 
+    out,_ = model(anchor_images) 
+    loss = F.cross_entropy(out, anchor_labels)
+    return loss
 
-def fit_fine( model, train_loader,optimizer):
+def fit_fine(model, train_loader,optimizer):
     ls=[]
     loss_fn=TripletLoss()
     for batch in tqdm(train_loader,desc="BATCHES FINETUNE"):
         optimizer.zero_grad()
-        loss = training_step(model,batch,loss_fn)
+        loss = fine_training_step(model,batch)
         loss.backward()
         optimizer.step()
         ls.append(loss)
