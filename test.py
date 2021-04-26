@@ -96,5 +96,6 @@ if __name__ =='__main__':
                 pdf_acc.append(len(bounds)*result['val_acc'])
                 weight.append(len(bounds))
             print("Test Accuracy Mean on this pdf is {}".format(sum(pdf_acc)/sum(weight)))
+            print("/n")
             ################################################################
 
