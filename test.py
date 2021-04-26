@@ -76,14 +76,14 @@ if __name__ =='__main__':
         for myvalpath in config.testfiles:
             print("Model Weight is ",model_wt)
             print("Test file is ",myvalpath)
-            valpath=join(myvalpath,"images")
+            valpath=join(myvalpath,"/images/")
             valid_paths = [join(valpath, f) for f in listdir(valpath) if isfile(join(valpath, f))]
             pdf_acc=[]
             weight=[]
             for imgpath in valid_paths:
                 with io.open(imgpath, 'rb') as image_file:
                     content = image_file.read()
-                jsonpath=join(myvalpath,"json")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+                jsonpath=join(myvalpath,"/json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
                 with open(jsonpath) as f:
                     bounds = json.load(f)
                 bounds=bounds_refine(bounds,imgpath,0.48)
