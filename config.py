@@ -28,3 +28,21 @@ channel=32
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
 checkpath="/home/ubuntu/data/ocr/ModelInceptfinal/epoch-161.pt"
 pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
+
+
+
+
+
+
+
+
+
+
+####################################################################
+
+####Requires a folder with images and json folder into it
+testfiles=["/home/ubuntu/data/ocr/kdeval/good/","/home/ubuntu/data/ocr/kdeval/bad/",\
+    "/home/ubuntu/data/ocr/kdeval/average/"] 
+
+weightfilepath="/home/ubuntu/data/ocr/ModelInceptfinal/FineTune2"
+testweights=["fine-epoch-37.pt","fine-epoch-346.pt","fine-epoch-494.pt"]
