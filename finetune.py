@@ -50,7 +50,7 @@ def get_ds(image,bounds):
     return ds
 
 if __name__ =='__main__':
-    batchsize=config.batchsize
+    batchsize=config.batch_size
     lr=config.learning_rate
     num_epochs=config.num_epochs
     num_epochs=50
