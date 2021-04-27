@@ -53,7 +53,6 @@ if __name__ =='__main__':
     batchsize=config.batch_size
     lr=config.learning_rate
     num_epochs=config.num_epochs
-    num_epochs=50
     device=config.device
     if device==None:
         device = utils.get_default_device()
@@ -80,6 +79,7 @@ if __name__ =='__main__':
                 param.requires_grad = True
 
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),lr=lr, weight_decay=lr/10.)
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     finepath=config.data_dir_path
     myvalpath="/home/ubuntu/data/ocr/kdeval/good/images/"
     valid_paths = [join(myvalpath, f) for f in listdir(myvalpath) if isfile(join(myvalpath, f))]
@@ -90,7 +90,7 @@ if __name__ =='__main__':
     p='runs/InceptTripletLossrun1/FineTune/LR'+str(int(1000000*lr))+'BS'+str(batchsize)
     writer = SummaryWriter(p)
     fineds=[f for f in listdir(finepath) if isfile(join(finepath, f))]
-    for epoch_fine in range(num_epochs):
+    for epoch_fine in range(50,num_epochs):
         random.shuffle(fineds)
         ds_train=DataUtils.FINEIMGDS(label_dict,finepath,fineds)
         train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=batchsize,shuffle=True,num_workers =6,pin_memory=True)
