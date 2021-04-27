@@ -60,9 +60,7 @@ if __name__ =='__main__':
             pdf_acc=[]
             weight=[]
             for imgpath in valid_paths:
-                with io.open(imgpath, 'rb') as image_file:
-                    content = image_file.read()
-                jsonpath=join(myvalpath,"json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+                jsonpath=join(myvalpath,"compare_json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
                 with open(jsonpath) as f:
                     bounds = json.load(f)
                 #bounds=bounds_refine(bounds,imgpath,0.48)
