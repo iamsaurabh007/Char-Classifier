@@ -11,9 +11,9 @@ MODELCHECKPOINT_PATH="/home/ubuntu/data/ocr/InceptFCByParts"
 device=None
 
 #USED IN DATALOADER
-batch_size=64
+batch_size=16
 shuffle=True
-num_workers=7
+num_workers=6
 alpha=0.01         ####loss=cross entropy loss + alpha * similarity loss
 #USED IN MODEL
 learning_rate=0.001

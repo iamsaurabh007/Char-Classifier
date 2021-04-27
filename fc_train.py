@@ -50,11 +50,10 @@ def get_ds(image,bounds):
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
     return ds
 
-#if __name__ =='__main__':
-def RUN(batch_size,lr):
-    batchsize=batch_size
-    #lr=learning_rate
-    num_epochs=50
+if __name__ =='__main__':
+    batchsize=config.batch_size
+    lr=config.learning_rate
+    num_epochs=config.num_epochs
     device=config.device
     if device==None:
         device = utils.get_default_device()
@@ -86,7 +85,7 @@ def RUN(batch_size,lr):
     checkpath=os.path.dirname(config.MODELCHECKPOINT_PATH)
     checkpath=join(checkpath,"FC_PART")
     os.system('mkdir -p ' +checkpath)
-    p='runs/FC_PART_TRAINING/hypersearch/LR'+str(int(1000000*lr))+'BS'+str(batchsize)
+    p='runs/FC_PART_TRAINING/LR'+str(int(1000000*lr))+'BS'+str(batchsize)
     writer = SummaryWriter(p)
     fineds=[f for f in listdir(finepath) if isfile(join(finepath, f))]
     for epoch_fine in range(num_epochs):
@@ -98,14 +97,14 @@ def RUN(batch_size,lr):
         loss_epoch=result.item()
         print("MEAN LOSS ON EPOCH {} is : {}".format(epoch_fine,loss_epoch))
         ## SAVE WEIGHT AFTER FINETUNE PER EPOCH
-        '''
+
         torch.save({
                     'epoch': epoch_fine,
-                    'model_state_dict': model.state_dict(),
+                    'model_state_dict': densemodel.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'loss': loss_epoch,
                     }, os.path.join(checkpath, 'fc-epoch-{}.pt'.format(epoch_fine)))
-        '''
+    
         ## WRITER TENSORBOARD
         writer.add_scalar('Training loss per epoch',loss_epoch,epoch_fine)
         ###############################################################
