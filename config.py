@@ -5,7 +5,7 @@ symbols.append(u"\u2122")
 symbols.append(" ")
 num_classes=len(symbols)
 
-data_dir_path="/home/ubuntu/data/ocr/out"
+data_dir_path="/home/ubuntu/craft_benchmark/fine_tune/fine_tune_sampled_ds"
 csv_path='/home/ubuntu/Character-Classifier/FC/hypergridcsv'
 MODELCHECKPOINT_PATH="/home/ubuntu/data/ocr/InceptFCByParts"
 device=None

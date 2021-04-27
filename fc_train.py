@@ -53,7 +53,7 @@ def get_ds(image,bounds):
 #if __name__ =='__main__':
 def RUN(batch_size,lr):
     batchsize=batch_size
-    lr=learning_rate
+    #lr=learning_rate
     num_epochs=50
     device=config.device
     if device==None:
