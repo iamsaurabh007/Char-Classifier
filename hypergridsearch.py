@@ -1,7 +1,8 @@
-import run
+
+import fc_train
+from tqdm import tqdm
 
 if __name__ =='__main__':
-    for x,i in enumerate([0.001,0.0001,0.01,0.1,0.00001]):
-        for y,j in enumerate([16,32,1,64]):
-            print("RUNNING ON ITERATION",x,y)
-            run.RUN(i,j)
+    for i in tqdm([0.001,0.0001,0.00001],desc="LR 3 4 6 5"):
+        for j in tqdm([8,16],desc="BS 16 4 64 256"):
+            fc_train.RUN(j,i)
