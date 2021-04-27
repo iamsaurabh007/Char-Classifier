@@ -33,7 +33,7 @@ class TripletLoss(nn.Module):
         return sim_losses.mean()
 
 def training_step(convmodel,densemodel, batch,loss_fn,train="EMBED"):
-    assert train == "EMBED", "DENSE"
+    assert train == "EMBED" or train == "DENSE"
     if train == "EMBED":
         anchor_images, anchor_labels,positive_images,negative_images = batch 
         embd = convmodel(anchor_images) 
@@ -113,7 +113,7 @@ def fit_fine(convmodel,densemodel, train_loader,optimizer):
     ls=[]
     for batch in tqdm(train_loader,desc="BATCHES FINETUNE"):
         optimizer.zero_grad()
-        loss = training_step(convmodel,densemodel,batch,_,"DENSE")
+        loss = training_step(convmodel,densemodel,batch,None,"DENSE")
         loss.backward()
         optimizer.step()
         ls.append(loss)
