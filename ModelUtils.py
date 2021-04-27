@@ -44,7 +44,7 @@ def training_step(convmodel,densemodel, batch,loss_fn,train="EMBED"):
         anchor_images,anchor_labels= batch
         embed=convmodel(anchor_images)
         out=densemodel(embed.detach())
-        loss=loss_fn(out,anchor_labels)
+        loss=F.cross_entropy(out,anchor_labels)
     return loss
     
 def validation_step(convmodel,densemodel,batch,loss_fn):
@@ -108,3 +108,13 @@ def fit(epochs, lr, convmodel,densemodel, train_loader, val_loader,writer,opt_fu
                     'optimizer_state_dict': optimizer.state_dict(),
                     'loss': loss_mean,
                     }, os.path.join(model_dir, 'epoch-{}.pt'.format(epoch)))
+
+def fit_fine(convmodel,densemodel, train_loader,optimizer):
+    ls=[]
+    for batch in tqdm(train_loader,desc="BATCHES FINETUNE"):
+        optimizer.zero_grad()
+        loss = training_step(convmodel,densemodel,batch,_,"DENSE")
+        loss.backward()
+        optimizer.step()
+        ls.append(loss)
+    return torch.stack(ls).mean()
