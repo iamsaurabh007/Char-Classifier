@@ -34,8 +34,13 @@ pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
 
 
 ####Requires a folder with images and json folder into it
-testfiles=["/home/ubuntu/data/ocr/kdeval/good/","/home/ubuntu/data/ocr/kdeval/bad/",\
-    "/home/ubuntu/data/ocr/kdeval/average/"] 
+#testfiles=["/home/ubuntu/data/ocr/kdeval/good/","/home/ubuntu/data/ocr/kdeval/bad/",\
+#   "/home/ubuntu/data/ocr/kdeval/average/"] 
 
 weightfilepath="/home/ubuntu/data/ocr/ModelInceptTripletrun1/FineTune/"
+
+
+testfiles=["good","bad","average"]
+testpath="/home/ubuntu/craft_benchmark/"
 testweights=["fine-epoch-51.pt","fine-epoch-109.pt","fine-epoch-39.pt"]
+

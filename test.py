@@ -30,28 +30,6 @@ from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 import random
 
-def get_ds(image,bounds):
-    image= Image.open(image)
-    #h=img.size[1]
-    #w=img.size[0]
-    #w=int(2.0*w)
-    #image=img.resize((w,h))
-    ds=[]
- 
-    for bound in bounds:
-        label=bound['text']
-        bound = bound['boundingBox']
-        xmin=min(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
-        xmax=max(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
-        ymin=min(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
-        ymax=max(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
-        if xmax-xmin==0 or ymax-ymin==0:
-            continue
-        im1 = image.crop((xmin,ymin,xmax,ymax))
-        ds.append((im1,label))
-        
-    #image.save(str(uuid.uuid1()) + '_handwritten.png')
-    return ds
 
 
 if __name__ =='__main__':
@@ -72,11 +50,13 @@ if __name__ =='__main__':
         model.load_state_dict(checkpoint['model_state_dict'])
         print("MODEL LOADED")
         model.train()
-        for myvalpath in config.testfiles:
+        for category in config.testfiles:      ####
             print("Model Weight is ",model_wt)
-            print("Test file is ",myvalpath)
+            print("Test file is ",category)  ##
+            myvalpath=config.testpath   ###
             valpath=join(myvalpath,"images/")
             valid_paths = [join(valpath, f) for f in listdir(valpath) if isfile(join(valpath, f))]
+            valid_paths=[str for str in valid_paths if category in str]   #####
             pdf_acc=[]
             weight=[]
             for imgpath in valid_paths:
@@ -85,9 +65,9 @@ if __name__ =='__main__':
                 jsonpath=join(myvalpath,"json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
                 with open(jsonpath) as f:
                     bounds = json.load(f)
-                bounds=bounds_refine(bounds,imgpath,0.48)
+                #bounds=bounds_refine(bounds,imgpath,0.48)
                 #print("Characters in Image=",len(bounds))
-                ds=get_ds(imgpath,bounds)
+                ds=utils.get_ds_crafts(imgpath,bounds)
                 ds_train=DataUtils.EVALIMGDS(label_dict,ds)
                 train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
                 train_gen =DataUtils.DeviceDataLoader(train_gen, device)
