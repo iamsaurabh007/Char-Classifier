@@ -85,7 +85,7 @@ def get_ds_crafts(image, bounds):
     for bound in bounds:
         if not (bound['ground'] and bound['input']):
             continue
-
+        label=bound['text']
         box = bound['input']['boundingBox']['vertices']
         x_min=min(box[0]['x'],box[1]['x'],box[2]['x'],box[3]['x'])
         x_max=max(box[0]['x'],box[1]['x'],box[2]['x'],box[3]['x'])

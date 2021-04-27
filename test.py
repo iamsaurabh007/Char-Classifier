@@ -66,7 +66,7 @@ if __name__ =='__main__':
                 jsonpath=join(myvalpath,"compare_json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
                 with open(jsonpath) as f:
                     bounds = json.load(f)
-                bounds=bounds_refine(bounds,imgpath,0.48)
+                #bounds=bounds_refine(bounds,imgpath,0.48)
                 #print("Characters in Image=",len(bounds))
                 ds=utils.get_ds_crafts(imgpath,bounds)
                 ds_train=DataUtils.EVALIMGDS(label_dict,ds)
