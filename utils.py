@@ -55,3 +55,44 @@ def csv_to_ls(path):
         reader = csv.reader(f)
         ls=[row[0] for row in reader]
     return ls
+
+def get_ds_vision(image,bounds):
+    image= Image.open(image)
+    #h=img.size[1]
+    #w=img.size[0]
+    #w=int(2.0*w)
+    #image=img.resize((w,h))
+    ds=[]
+ 
+    for bound in bounds:
+        label=bound['text']
+        bound = bound['boundingBox']
+        xmin=min(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
+        xmax=max(bound["vertices"][0]['x'],bound["vertices"][1]['x'],bound["vertices"][2]['x'],bound["vertices"][3]['x'])
+        ymin=min(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
+        ymax=max(bound["vertices"][0]['y'],bound["vertices"][1]['y'],bound["vertices"][2]['y'],bound["vertices"][3]['y'])
+        if xmax-xmin==0 or ymax-ymin==0:
+            continue
+        im1 = image.crop((xmin,ymin,xmax,ymax))
+        ds.append((im1,label))
+
+    return ds
+
+def get_ds_crafts(image, bounds):
+    image= Image.open(image)
+    ds=[]
+    bounds=bounds['iou']
+    for bound in bounds:
+        if not (bound['ground'] and bound['input']):
+            continue
+
+        box = bound['input']['boundingBox']['vertices']
+        x_min=min(box[0]['x'],box[1]['x'],box[2]['x'],box[3]['x'])
+        x_max=max(box[0]['x'],box[1]['x'],box[2]['x'],box[3]['x'])
+        y_min=min(box[0]['y'],box[1]['y'],box[2]['y'],box[3]['y'])
+        y_max=max(box[0]['y'],box[1]['y'],box[2]['y'],box[3]['y'])
+        
+        im1 = image.crop((x_min,y_min,x_max,y_max))
+        ds.append((im1,label))
+        
+    return ds
