@@ -40,7 +40,7 @@ if __name__ =='__main__':
     for i,sym in enumerate(config.symbols):
         revdict[i]=sym
 
-    convmodel=InceptFC.Convolutional_block()()
+    convmodel=InceptFC.Convolutional_block()
     convmodel.to(device)
     checkpoint=torch.load(config.conv_checkpath, map_location=device)
     convmodel.load_state_dict(checkpoint['model_state_dict'])
@@ -48,29 +48,29 @@ if __name__ =='__main__':
     for model_wt in config.testweights:  
         densemodel=InceptFC.FC_block()    
         #model=Resnet.ResNet50(3,97)
-        model.to(device)
+        densemodel.to(device)
         checkpath=join(config.weightfilepath,model_wt)
         print(checkpath)
         checkpoint=torch.load(checkpath, map_location=device)
         densemodel.load_state_dict(checkpoint['model_state_dict'])
         print("MODEL LOADED")
         densemodel.train()
-        for category in config.testfiles:      ####
+        for myvalpath in config.testfiles:      ####
             print("Model Weight is ",model_wt)
             print("Test file is ",category)  ##
-            myvalpath=config.testpath   ###
+            #myvalpath=config.testpath   ###
             valpath=join(myvalpath,"images/")
             valid_paths = [join(valpath, f) for f in listdir(valpath) if isfile(join(valpath, f))]
-            valid_paths=[str for str in valid_paths if category in str]   #####
+            #valid_paths=[str for str in valid_paths if category in str]   #####
             pdf_acc=[]
             weight=[]
             for imgpath in valid_paths:
-                jsonpath=join(myvalpath,"compare_json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+                jsonpath=join(myvalpath,"json/")+os.path.splitext(os.path.basename(imgpath))[0]+".json"  ###
                 with open(jsonpath) as f:
                     bounds = json.load(f)
-                #bounds=bounds_refine(bounds,imgpath,0.48)
+                bounds=bounds_refine(bounds,imgpath,0.48)
                 #print("Characters in Image=",len(bounds))
-                ds=utils.get_ds_crafts(imgpath,bounds)
+                ds=utils.get_ds_vision(imgpath,bounds)
                 ds_train=DataUtils.EVALIMGDS(label_dict,ds)
                 train_gen = torch.utils.data.DataLoader(ds_train ,batch_size=64,shuffle=False,num_workers =6,pin_memory=True)
                 train_gen =DataUtils.DeviceDataLoader(train_gen, device)
