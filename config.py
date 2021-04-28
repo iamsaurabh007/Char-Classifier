@@ -26,9 +26,9 @@ channel=32
 ####MODELEVALUATION
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
-checkpath="/home/ubuntu/data/ocr/ModelInceptfinal/epoch-161.pt"
-pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
-
+checkpath="/home/ubuntu/data/ocr/Model_Weights/ModelInceptfinal/FineTune2/fine-epoch-37.pt"
+#pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
+pdfdata="/home/ubuntu/data/ocr/kdeval/good/"
 
 
 
@@ -47,5 +47,5 @@ pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
 
 testfiles=["good","bad","average"]
 testpath="/home/ubuntu/craft_benchmark/"
-weightfilepath="/home/ubuntu/data/ocr/ModelInceptfinal/FineTune2"
+weightfilepath="/home/ubuntu/data/ocr/Model_Weights/ModelInceptfinal/FineTune2"
 testweights=["fine-epoch-37.pt","fine-epoch-346.pt","fine-epoch-494.pt"]

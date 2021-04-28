@@ -121,13 +121,13 @@ if __name__ =='__main__':
             predic=[revdict[i] for i in predic]
             predicagg.extend(predic)
             page_list.append(os.path.splitext(os.path.basename(imgpath))[0])
-        #df_main=pd.DataFrame(list(zip(page_list,pdf_acc,weight)),columns =['Page', 'Acc','Chars'])
-        #df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,wordidagg,sequenceagg,pageagg)),\
-        #   columns =['Coordinates', 'Actual','Predicted','Word','Sequence','Page'])
-        #csvpath=join(config.pdfdata,"csv/")
-        #s.system('mkdir -p ' +csvpath)
-        #csvpath2=join(csvpath,"MAINIncept161RefineBinarykdeval.csv")
-        #svpath=join(csvpath,"DEATAILEDIncept161RefineBinarykdeval.csv")
-        #f.to_csv(csvpath,index=False)
-        #df_main.to_csv(csvpath2,index=False)
+        df_main=pd.DataFrame(list(zip(page_list,pdf_acc,weight)),columns =['Page', 'Acc','Chars'])
+        df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,wordidagg,sequenceagg,pageagg)),\
+           columns =['Coordinates', 'Actual','Predicted','Word','Sequence','Page'])
+        csvpath=join(config.pdfdata,"csv/")
+        os.system('mkdir -p ' +csvpath)
+        csvpath2=join(csvpath,"MAINInceptFT.csv")
+        csvpath=join(csvpath,"DEATAILEDInceptFT.csv")
+        df.to_csv(csvpath,index=False)
+        df_main.to_csv(csvpath2,index=False)
         print("ref={},   Accuracy Mean on this pdf is {}".format(ref,sum(pdf_acc)/sum(weight)))
