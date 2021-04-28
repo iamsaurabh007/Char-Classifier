@@ -57,7 +57,7 @@ if __name__ =='__main__':
         densemodel.train()
         for myvalpath in config.testfiles:      ####
             print("Model Weight is ",model_wt)
-            print("Test file is ",category)  ##
+            print("Test file is ",myvalpath)  ##
             #myvalpath=config.testpath   ###
             valpath=join(myvalpath,"images/")
             valid_paths = [join(valpath, f) for f in listdir(valpath) if isfile(join(valpath, f))]
