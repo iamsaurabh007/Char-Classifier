@@ -63,6 +63,10 @@ def correct_region(region,energy_density,rat):
     return {'text':text,'iou':iou,'input': {'boundingBox':{'vertices'  : [{'x':int(box_left-left_delta),'y':box_top},\
                                                         {'x':int(box_right-right_delta),'y':box_top},\
                                                         {'x':int(box_right-right_delta),'y':box_bottom},\
+                                                        {'x':int(box_left-left_delta),'y':box_bottom}]}},
+            'ground':{"text":text,'boundingBox':{'vertices'  : [{'x':int(box_left-left_delta),'y':box_top},\
+                                                        {'x':int(box_right-right_delta),'y':box_top},\
+                                                        {'x':int(box_right-right_delta),'y':box_bottom},\
                                                         {'x':int(box_left-left_delta),'y':box_bottom}]}}}
 
 def get_corrected_regions(regions,energy_density,rat):
