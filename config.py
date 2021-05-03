@@ -27,8 +27,8 @@ channel=32
 
 #checkpath="/home/ubuntu/data/ocr/ModelResnetfinal/epoch-36.pt"
 checkpath="/home/ubuntu/data/ocr/Model_Weights/ModelInceptfinal/FineTune2/fine-epoch-37.pt"
-#pdfdata="/home/ubuntu/craft_benchmark/fine_tune/"
-pdfdata="/home/ubuntu/data/ocr/kdeval/good/"
+pdfdata="/home/ubuntu/craft_benchmark/"
+#pdfdata="/home/ubuntu/data/ocr/kdeval/good/"
 
 
 
