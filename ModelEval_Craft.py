@@ -20,7 +20,7 @@ import torchvision
 import json
 import torch
 import utils
-from bounds_refinement import bounds_refine
+from bounds_refinement_crafts import bounds_refine
 
 def get_ds(image, bounds):
     image= Image.open(image)
@@ -90,7 +90,7 @@ if __name__ =='__main__':
             jsonpath=config.pdfdata+"compare_json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
             with open(jsonpath) as f:
                 bounds = json.load(f)
-            #bounds=bounds_refine(bounds,imgpath,ref)
+            bounds=bounds_refine(bounds,imgpath,ref)
             #print("Characters in Image=",len(bounds))
             ds,coords,labels,iou=get_ds(imgpath,bounds)
             coordsagg.extend(coords)
