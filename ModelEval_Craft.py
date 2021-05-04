@@ -28,6 +28,7 @@ def get_ds(image, bounds):
     coord=[]
     labels=[]
     iouagg=[]
+    confagg=[]#################
     #wordid=[]
     #seq=[]
     bounds=bounds['iou']
@@ -36,6 +37,7 @@ def get_ds(image, bounds):
             continue
         label=bound['text']
         iou=bound['iou']
+        conf=bound["conf"]###########
         #wordid.append(bound['idword'])
         #seq.append(bound['sequence'])
         box = bound['input']['boundingBox']['vertices']
@@ -48,10 +50,11 @@ def get_ds(image, bounds):
         ds.append((im1,label))
         labels.append(label)
         iouagg.append(iou)
+        confagg.append(conf)
         coord.append((x_min,y_min,x_max,y_max))
     
     #image.save(str(uuid.uuid1()) + '_handwritten.png')
-    return ds,coord,labels,iouagg
+    return ds,coord,labels,iouagg,confagg   #####
 
 
 if __name__ =='__main__':
@@ -84,17 +87,19 @@ if __name__ =='__main__':
         predicagg=[]
         iouagg=[]
         page_list=[]
+        confagg=[]####
         for imgpath in imgpaths:
             #with io.open(imgpath, 'rb') as image_file:
             #    content = image_file.read()
-            jsonpath=config.pdfdata+"compare_json/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"
+            jsonpath=config.pdfdata+"compare_yolo/"+os.path.splitext(os.path.basename(imgpath))[0]+".json"####
             with open(jsonpath) as f:
                 bounds = json.load(f)
-            bounds=bounds_refine(bounds,imgpath,ref)
+            #bounds=bounds_refine(bounds,imgpath,ref)
             #print("Characters in Image=",len(bounds))
-            ds,coords,labels,iou=get_ds(imgpath,bounds)
+            ds,coords,labels,iou,conf=get_ds(imgpath,bounds)###
             coordsagg.extend(coords)
             labelsagg.extend(labels)
+            confagg.extend(conf)######
             pageagg.extend([os.path.splitext(os.path.basename(imgpath))[0]]*len(labels))
             iouagg.extend(iou)
             ds_train=DataUtils.EVALIMGDS(label_dict,ds)
@@ -125,12 +130,12 @@ if __name__ =='__main__':
             weight.append(len(bounds))
             page_list.append(os.path.splitext(os.path.basename(imgpath))[0])
         df_main=pd.DataFrame(list(zip(page_list,pdf_acc,weight)),columns =['Page', 'Acc','Chars'])
-        df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,iouagg,pageagg)),\
-            columns =['Coordinates', 'Actual','Predicted','IOU','Page'])
+        df = pd.DataFrame(list(zip(coordsagg, labelsagg,predicagg,iouagg,pageagg,confagg)),\
+            columns =['Coordinates', 'Actual','Predicted','IOU','Page','confidence'])
         csvpath=join(config.pdfdata,"csv/average/")
         os.system('mkdir -p ' +csvpath)
-        csvpath2=join(csvpath,"MAINIncept37CRAFTFT.csv")
-        csvpath=join(csvpath,"DEATAILEDIncept37CRAFTFT.csv")
+        csvpath2=join(csvpath,"MAINIncept37YOLOFT.csv")
+        csvpath=join(csvpath,"DEATAILEDIncept37YOLOFT.csv")
         df.to_csv(csvpath,index=False)
         df_main.to_csv(csvpath2,index=False)
         print("ref={},   Accuracy Mean on this pdf is {}".format(ref,sum(pdf_acc)/sum(weight)))
